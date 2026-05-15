@@ -1,0 +1,14 @@
+# @package _global_
+# History sweep: H=1 (RFC-0008 §D11).
+#
+# Single-step context. Tests whether longer history helps prediction quality.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  history_len: 1
+
+data:
+  history_len: 1

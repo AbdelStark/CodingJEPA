@@ -1,0 +1,14 @@
+# @package _global_
+# Ablation: disable SIGReg (RFC-0008 §D11).
+#
+# Pretrain config with the SIGReg term turned off. Used to test whether the
+# representation collapses without the variance regulariser. ``loss.lambda_``
+# remains 0.05 so that flipping ``enabled`` is the only difference from the
+# canonical Stage A baseline.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+loss:
+  enabled: false

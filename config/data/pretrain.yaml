@@ -1,0 +1,23 @@
+# Stage A pretrain data config (RFC-0008 §D5).
+#
+# Builds a uniform-random DataLoader over precomputed chunk sequences. The
+# ``parquet_path`` points to the per-RFC-0008 §D5 source; tests / smoke runs
+# may override it with a JSONL fixture (``ChunkSequenceDataset`` accepts both).
+
+_target_: codingjepa.training.dataloader.build_pretrain_dataloader
+
+# Default source — overridable from the CLI: ``data.parquet_path=...``.
+parquet_path: data/sequences/v1.parquet
+
+# Chunk-level sequence settings (RFC-0008 §D2).
+max_length: 512  # tokens per chunk (RFC-0012 §D2).
+history_len: 3   # H — context chunks (RFC-0003 §D3).
+n_preds: 1       # predicted chunks (RFC-0003 §D3).
+
+# DataLoader knobs (RFC-0008 §D5).
+batch_size: 64
+num_workers: 8
+seed: 42
+
+# Sampling regime — Stage A uses uniform random per epoch.
+intent_balanced: false

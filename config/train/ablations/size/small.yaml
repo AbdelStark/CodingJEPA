@@ -1,0 +1,23 @@
+# @package _global_
+# Size sweep: small encoder (hidden=256, RFC-0008 §D11).
+#
+# Scales hidden size and FFN dim proportionally; keeps n_layers / n_heads / H
+# at the baseline so the experiment isolates width.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  hidden_size: 256
+  encoder:
+    ffn_dim: 1024
+  projector_mlp:
+    input_dim: 256
+    hidden_dim: 1024
+    output_dim: 256
+  ar_predictor:
+    ffn_dim: 1024
+
+loss:
+  embed_dim: 256

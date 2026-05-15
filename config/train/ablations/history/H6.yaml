@@ -1,0 +1,15 @@
+# @package _global_
+# History sweep: H=6 (RFC-0008 §D11).
+#
+# Doubled context. Tests whether longer history helps prediction quality on
+# the same compute budget.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  history_len: 6
+
+data:
+  history_len: 6

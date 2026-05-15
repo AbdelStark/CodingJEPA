@@ -1,0 +1,14 @@
+# Root composition entry-point (RFC-0008 §D11).
+#
+# Defaults to Stage A pretrain. To switch stages or pick an ablation, override
+# the ``train`` group from the CLI:
+#
+#   uv run python -m codingjepa.training train=finetune
+#   uv run python -m codingjepa.training train=ablations/no-sigreg
+#
+# Sub-configs (model / data / optimizer / loss) are pulled in by the active
+# train config's ``defaults`` list, so they don't need to be listed here.
+
+defaults:
+  - train: pretrain
+  - _self_

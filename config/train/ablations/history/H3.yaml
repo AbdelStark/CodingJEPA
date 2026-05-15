@@ -1,0 +1,15 @@
+# @package _global_
+# History sweep: H=3 (RFC-0008 §D11 default).
+#
+# Matches the canonical Stage A baseline. Included for parity / regression
+# tracking inside the sweep.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  history_len: 3
+
+data:
+  history_len: 3

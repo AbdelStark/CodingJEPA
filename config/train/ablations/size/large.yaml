@@ -1,0 +1,23 @@
+# @package _global_
+# Size sweep: large encoder (hidden=768, RFC-0008 §D11).
+#
+# Scales hidden size and FFN dim proportionally. Note 768 % 8 == 0 so the
+# 8-head attention partitions evenly.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  hidden_size: 768
+  encoder:
+    ffn_dim: 3072
+  projector_mlp:
+    input_dim: 768
+    hidden_dim: 3072
+    output_dim: 768
+  ar_predictor:
+    ffn_dim: 3072
+
+loss:
+  embed_dim: 768

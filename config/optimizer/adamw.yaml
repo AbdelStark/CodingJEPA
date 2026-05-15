@@ -1,0 +1,12 @@
+# AdamW optimizer config (RFC-0008 §D4).
+#
+# Mirrors ``codingjepa.training.optimizer.build_optimizer`` so callers can run
+#   optimizer = hydra.utils.instantiate(cfg.optimizer, model=model)
+# to build the optimizer with the RFC-0008 defaults.
+
+_target_: codingjepa.training.optimizer.build_optimizer
+
+lr: 3.0e-4
+weight_decay: 0.05
+betas: [0.9, 0.95]
+eps: 1.0e-8
