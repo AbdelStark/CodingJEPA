@@ -163,7 +163,7 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 |---|---|---|---|
 | #2 | [meta] tracker: spec corpus + implementation issue set bootstrap | open | — |
 | #3 | [Tracking] Infrastructure & reproducibility | open (partial) | RFC-0013, spec/02–/09 |
-| #4 | [Tracking] Data pipeline | open (#55 remains) | RFC-0002, RFC-0004, RFC-0012, RFC-0014 |
+| #4 | [Tracking] Data pipeline | open (#55 closed → #189) | RFC-0002, RFC-0004, RFC-0012, RFC-0014 |
 | #5 | [Tracking] Model stack | ✅ closed | RFC-0003 |
 | #6 | [Tracking] Training pipeline | open (#75, #76, #77 remain) | RFC-0008 |
 | #7 | [Tracking] Baselines | ✅ closed | RFC-0005 |
@@ -172,6 +172,7 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 | #10 | [Tracking] Demo & developer workflow | ✅ closed | RFC-0006, RFC-0009 |
 | #11 | [Tracking] Evaluation harness | open | RFC-0010, RFC-0005 |
 | #12 | [Tracking] Paper, release, packaging | open | RFC-0011, RFC-0013, RFC-0014, spec/09 |
+| #173 | [Tracking] Dataset: human-python-refactors — curation, quality, HF publication | open | RFC-0002, RFC-0014, RFC-0015 |
 
 ## Milestone: v0.1 — data pipeline frozen + baselines + infrastructure ready
 
@@ -313,15 +314,44 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 | # | Status | Title | Area | Priority | Effort | RFC / Spec | Tracking |
 |---|--------|-------|------|----------|--------|------------|----------|
 | #24 | 🔲 | infra: Dockerfile.eval | infra | p1 | m | RFC-0013 | #3 |
-| #30 | 🔲 | infra: LICENSES/ + NOTICE generator | infra | p1 | s | RFC-0014 | #3 |
+| #30 | 🔲 | infra: LICENSES/ + NOTICE generator | infra | p1 | s | RFC-0014 | #3, #173 |
 | #121 | 🔲 | eval: figures generator (PDFs) | eval | p1 | m | RFC-0010, RFC-0011 | #11 |
 | #124 | 🔲 | release: paper/main.tex skeleton | release | p1 | s | RFC-0011 | #12 |
 | #125 | ✅ | release: MODEL_CARD.md template | release | p0 | s | RFC-0013, spec/03 | #12 |
 | #126 | 🔲 | release: HF Hub upload (model + tokenizer) | release | p1 | m | RFC-0013 | #12 |
-| #127 | 🔲 | release: HF Hub upload (pairs corpus) | release | p1 | m | RFC-0014 | #12 |
+| #127 | 🔲 | release: HF Hub upload (pairs corpus) — superseded by #173 stream | release | p1 | m | RFC-0014, RFC-0015 | #173 |
 | #128 | 🔲 | release: PHASE-1.md note (data freeze) | release | p1 | s | spec/IMPLEMENTATION-PLAN | #12 |
 | #129 | 🔲 | release: PHASE-4.md / PHASE-5.md notes | release | p2 | s | spec/IMPLEMENTATION-PLAN | #12 |
 | #130 | ✅ | release: v1.0.0 release runbook | release | p1 | s | spec/09 | #12 |
+
+## Milestone: dataset-v1.0 — human-python-refactors corpus and HF publication
+
+| # | Status | Title | Area | Priority | Effort | RFC / Spec | Tracking |
+|---|--------|-------|------|----------|--------|------------|----------|
+| #174 | 🔲 | data: wire --cutoff 2023-12-31 into pairs.py and data CLI | data | p0 | s | RFC-0002, RFC-0015 | #173 |
+| #175 | 🔲 | data: add commit_cutoff_utc to manifest JSON schema | data | p0 | s | RFC-0002, RFC-0015 | #173 |
+| #176 | 🔲 | tools: hf_convert.py — DatasetDict builder + HF push script | release | p0 | m | RFC-0015 | #173 |
+| #177 | 🔲 | tools: secret-scan assertion helpers | data | p0 | s | RFC-0014, RFC-0015 | #173 |
+| #178 | 🔲 | data: Step 1 — mirror all 10 repos at pinned SHAs | data | p0 | m | RFC-0002, RFC-0015 | #173 |
+| #179 | 🔲 | data: Step 2 — normalize all repo source files | data | p0 | m | RFC-0012, RFC-0014 | #173 |
+| #180 | 🔲 | data: Step 3 — chunk all repos → data/chunks/*.parquet | data | p0 | m | RFC-0012, RFC-0015 | #173 |
+| #181 | 🔲 | data: Step 4 — extract refactor pairs (--cutoff 2023-12-31) | data | p0 | l | RFC-0002, RFC-0015 | #173 |
+| #182 | 🔲 | data: Step 5 — apply 8 heuristic labelers + enforce 12k/intent quota | data | p0 | m | RFC-0002, RFC-0015 | #173 |
+| #183 | 🔲 | data: Step 6 — secret scan over pairs corpus, zero-hit gate | data | p0 | s | RFC-0014, RFC-0015 | #173 |
+| #184 | 🔲 | data: Step 7 — deduplication (exact + MinHash LSH near-dedup) | data | p0 | m | RFC-0014, RFC-0015 | #173 |
+| #185 | 🔲 | data: Step 8 — assign train/val/test splits by-repository | data | p0 | s | RFC-0014, RFC-0015 | #173 |
+| #186 | 🔲 | data: Step 9 — full corpus audit, all 4 gates must pass | data | p0 | m | RFC-0002, RFC-0014 | #173 |
+| #187 | 🔲 | data: Step 10 — write content-addressed manifest.lock.json and commit | data | p0 | s | RFC-0014, RFC-0015 | #173 |
+| #188 | 🔲 | data: corpus QA report — statistics, intent distribution, pair counts | data | p1 | m | RFC-0015 | #173 |
+| #189 | 🔲 | data: gold subset annotation — 200 pairs, Cohen's κ ≥ 0.7 (closes #55) | data | p1 | l | RFC-0002, RFC-0015 | #173 |
+| #190 | 🔲 | release: write data/DATASET_CARD.md from RFC-0015 template | release | p1 | s | RFC-0015 | #173 |
+| #191 | 🔲 | release: dry-run hf_convert.py — validate HF schema on corpus sample | release | p1 | s | RFC-0015 | #173 |
+| #192 | 🔲 | release: upload pairs config to CodingJEPA/human-python-refactors | release | p1 | m | RFC-0015 | #173 |
+| #193 | 🔲 | release: upload chunks config to CodingJEPA/human-python-refactors | release | p1 | m | RFC-0015 | #173 |
+| #194 | 🔲 | release: upload NOTICE + LICENSES/ to HF dataset repo | release | p1 | s | RFC-0014, RFC-0015 | #173 |
+| #195 | 🔲 | release: publish dataset card (README.md) to HF | release | p1 | s | RFC-0015 | #173 |
+| #196 | 🔲 | release: verify public HF access — load_dataset() roundtrip smoke test | release | p0 | s | RFC-0015 | #173 |
+| #197 | 🔲 | release: create GitHub tag data-v1.0.0 at the manifest commit | release | p1 | s | RFC-0015 | #173 |
 
 ## Cross-cutting dependencies
 
