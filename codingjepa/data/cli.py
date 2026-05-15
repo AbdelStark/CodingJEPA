@@ -153,7 +153,7 @@ def cmd_all(args: argparse.Namespace) -> int:
     steps = ("mirror", "chunk", "pairs", "dedup", "splits", "audit", "manifest")
     for step in steps:
         handler = getattr(_self, f"cmd_{step}")
-        rc = handler(args)
+        rc: int = int(handler(args))
         if rc != 0:
             return rc
     return 0

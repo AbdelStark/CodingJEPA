@@ -7,3 +7,6 @@ node_modules/
 dist/
 .artifacts/
 .runs/
+
+# Claude worktrees (temporary agent workspaces)
+.claude/worktrees/
