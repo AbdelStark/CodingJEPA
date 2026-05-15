@@ -1,0 +1,68 @@
+---
+session: general
+date: 2026-05-15
+status: complete
+outcome: SUCCEEDED
+---
+
+goal: Implement all 6 phases of CodingJEPA (data→model→training→baselines→safety→inference), merge PRs, update backlog
+now: Implement demo (#100–#106) — start with cli (#100), then diff renderer (#102), messages (#104), then web FastAPI (#101)
+
+test: uv run pytest -m "not slow" -q  # should show 871 passed, 0 failed
+
+done_this_session:
+  - task: Phase 3 — training infrastructure (optimizer, module, callbacks, manager, preflight, WandBLogger)
+    files: [codingjepa/training/optimizer.py, codingjepa/training/module.py, codingjepa/training/callbacks.py, codingjepa/training/manager.py, codingjepa/training/preflight.py, codingjepa/training/logging.py, tests/training/test_training.py]
+  - task: Phase 4 — baselines (BM25, MLM-encoder, CodeBERT, cheap-baseline-first gate)
+    files: [codingjepa/baselines/bm25.py, codingjepa/baselines/mlm_encoder.py, codingjepa/baselines/codebert.py, codingjepa/training/preflight.py, tests/test_baselines.py]
+  - task: Phase 5 — safety checkers (5 checkers + filter chain + Hypothesis property tests)
+    files: [codingjepa/safety/checkers/*, codingjepa/safety/filter.py, tests/safety/test_checkers.py, tests/safety/test_chain.py]
+  - task: Phase 6 — inference pipeline (embed, index, retrieve, rerank, confidence, round-trip)
+    files: [codingjepa/inference/embed.py, codingjepa/inference/index.py, codingjepa/inference/retrieve.py, codingjepa/inference/rerank.py, codingjepa/inference/confidence.py, codingjepa/inference/__init__.py, tests/inference/*, tests/perf/test_latency.py]
+  - task: Fixed torch.use_deterministic_algorithms global state leak in round-trip test
+    files: [tests/inference/test_round_trip.py]
+  - task: Updated IMPLEMENTATION.md — all 🔲 for closed issues flipped to ✅
+    files: [docs/roadmap/IMPLEMENTATION.md]
+  - task: Updated MVP-STATUS.md — all 6 phases documented as complete
+    files: [docs/spec/MVP-STATUS.md]
+  - task: Added all phase entries to CHANGELOG.md [Unreleased] section
+    files: [CHANGELOG.md]
+  - task: Closed tracking issues #5, #7, #8, #9 (model, baselines, inference, safety — all sub-issues done)
+    files: []
+
+blockers: []
+
+questions:
+  - GPU resources for Stage A pretrain run (#75)? The training infra is ready, just needs compute.
+  - Should demo (#100–#106) or eval harness (#107–#123) be prioritized next?
+
+decisions:
+  - parallel-agent-worktrees: used isolation=worktree for each phase agent, then copied files to feature branch for review
+  - test-determinism-fix: torch.use_deterministic_algorithms(True) must be restored in finally block — causes cross-test contamination otherwise
+  - mypy-overrides: added rank_bm25.*, faiss.* to ignore_missing_imports overrides
+
+findings:
+  - all-871-tests-pass: full suite passes without the --slow marker (inference + safety + baselines + training + data + model)
+  - tracking-issues-4-6-partial: #4 (data) has #55 open (gold subset annotation); #6 (training) has #75, #76, #77 open (actual runs + docs)
+  - codebert-requires-network: CodeBERT tests mock transformers.AutoModel — real runs need HF Hub access
+
+worked:
+  - Parallel agent spawning with isolation=worktree — each phase agent implemented independently, then merged in sequence
+  - hypothesis for property tests — 60 tests in test_chain.py all pass cleanly
+  - BatchNorm1d reshape fix in model.py — (B,H,D) tensors must be reshaped to (B*H,D) before projector
+
+failed:
+  - test_loss_decreases_with_training failing in full suite — was torch.use_deterministic_algorithms side effect from round-trip test
+
+next:
+  - Implement demo CLI (#100): `python -m codingjepa refactor --source … --intent … --k 10`
+  - Implement demo diff renderer (#102): pygments + difflib colored diff
+  - Implement demo messages (#104): failure copy table for demo path
+  - Implement demo web FastAPI app (#101): GET /, POST /refactor, GET /healthz
+  - Implement eval harness (#107): Benchmark base class + orchestrator
+  - Implement CJ-RET-100/1k (#108), CJ-INTENT (#109) benchmarks
+  - Create Hydra config tree skeleton (#17)
+
+files:
+  created: [codingjepa/training/optimizer.py, codingjepa/baselines/bm25.py, codingjepa/baselines/mlm_encoder.py, codingjepa/baselines/codebert.py, codingjepa/safety/checkers/_result.py, tests/training/test_training.py, tests/test_baselines.py, tests/safety/test_checkers.py, tests/safety/test_chain.py, tests/safety/__init__.py, tests/inference/*, tests/perf/test_latency.py, thoughts/shared/handoffs/general/2026-05-15_08-30_all-phases-complete.yaml]
+  modified: [codingjepa/training/*.py, codingjepa/baselines/*.py, codingjepa/safety/*.py, codingjepa/safety/checkers/*.py, codingjepa/inference/*.py, pyproject.toml, uv.lock, docs/roadmap/IMPLEMENTATION.md, docs/spec/MVP-STATUS.md, CHANGELOG.md]

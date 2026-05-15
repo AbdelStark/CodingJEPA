@@ -1,8 +1,7 @@
-# Implementation Tracker — 2026-05-15
+# Implementation Tracker — updated 2026-05-15
 
-Generated from the spec corpus on branch `claude/follow-goal-docs-Z8iUv`. Every implementable unit of work in the spec is filed below. Each issue is independently shippable; cross-issue dependencies are noted inline.
-
-The label / milestone convention from `docs/goal.md` §Phase 2.2 is recorded in each issue's `Metadata` block. Maintainers can apply milestones (`v0.1`–`v1.0`) to the issues using the milestone column below.
+Generated from the spec corpus. Every implementable unit of work in the spec is filed below.
+Each issue is independently shippable; cross-issue dependencies are noted inline.
 
 ---
 
@@ -17,9 +16,10 @@ The label / milestone convention from `docs/goal.md` §Phase 2.2 is recorded in 
 
 ## Completed (merged to `main` by 2026-05-15)
 
-All infrastructure and scaffold issues from the v0.1 milestone have landed,
-plus key eval and safety primitives. GitHub issues are closed.
+All infrastructure, data pipeline, model, training infrastructure, baselines,
+safety, and inference pipeline issues have landed. GitHub issues are closed.
 
+### Infrastructure (v0.1)
 | # | Title | PR |
 |---|-------|----|
 | #13 | infra: initialize pyproject.toml | #132 |
@@ -40,34 +40,127 @@ plus key eval and safety primitives. GitHub issues are closed.
 | #40 | intents: codingjepa.intents.acceptance | #143 |
 | #97 | safety: stable refusal copy table (R001–R007) | #144 |
 | #99 | safety: secret pattern table | #145 |
+
+### Data pipeline (v0.1)
+| # | Title | PR |
+|---|-------|----|
+| #34 | data: codingjepa.data.mirror | #156 |
+| #35 | data: codingjepa.data.chunker | #158 |
+| #36 | data: codingjepa.data.normalize | #157 |
+| #37 | data: SentencePiece BPE tokenizer | #162 |
+| #38 | data: tokenizer coverage audit | #162 |
+| #39 | data: PyDriller commit walker | #159 |
+| #41 | data: labeler — extract-helper | #161 |
+| #42 | data: labeler — inline-helper | #161 |
+| #43 | data: labeler — comprehension-rewrite | #161 |
+| #44 | data: labeler — dataclass-migration | #161 |
+| #45 | data: labeler — exception-handling-cleanup | #161 |
+| #46 | data: labeler — loop-to-vectorized | #161 |
+| #47 | data: labeler — argument-defaulting | #161 |
+| #48 | data: labeler — none-typing-modernization | #161 |
+| #49 | data: codingjepa.data.dedup | #163 |
+| #50 | data: codingjepa.data.splits + leakage | #164 |
+| #51 | data: codingjepa.data.secrets_scan | #164 |
+| #52 | data: codingjepa.data.audit | #164 |
+| #53 | data: codingjepa.data.manifest | #165 |
+| #54 | data: codingjepa.data.sequences | #165 |
+| #56 | data: codingjepa.data.cli wiring | #166 |
+| #57 | data: per-intent quotas | #165 |
+
+### Eval primitives (v0.1)
+| # | Title | PR |
+|---|-------|----|
 | #116 | eval: codingjepa.eval.pools | #154 |
 | #117 | eval: codingjepa.eval.stats | #155 |
 | #118 | eval: results.json schema + validator | #149 |
 | #122 | eval: hash-check enforcer | #150 |
+
+### Model stack (v0.2)
+| # | Title | PR |
+|---|-------|----|
+| #58 | model: codingjepa.modules.encoder | #167 |
+| #59 | model: codingjepa.modules.projector | #167 |
+| #60 | model: codingjepa.modules.ar_predictor | #167 |
+| #61 | model: codingjepa.modules.pred_proj | #167 |
+| #62 | model: codingjepa.modules.intent_embedder | #167 |
+| #63 | model: codingjepa.modules.sigreg | #167 |
+| #64 | model: codingjepa.model.CodingJEPA | #167 |
+| #65 | model: tiny-slice training pass | #167 |
+
+### Training infrastructure (v0.2)
+| # | Title | PR |
+|---|-------|----|
+| #66 | train: codingjepa.training.module | #168 |
+| #67 | train: codingjepa.training.manager | #168 |
+| #68 | train: codingjepa.training.dataloader | #168 |
+| #69 | train: codingjepa.training.optimizer | #168 |
+| #70 | train: callbacks.RankDiagnostic | #168 |
+| #71 | train: callbacks.LossMonotonicity | #168 |
+| #72 | train: callbacks.Checkpoint | #168 |
+| #73 | train: WandB integration | #168 |
+| #74 | train: codingjepa.training.preflight | #168 |
+
+### Baselines (v0.2)
+| # | Title | PR |
+|---|-------|----|
+| #78 | baseline: B1 — BM25 over BPE tokens | #169 |
+| #79 | baseline: B2 — MLM-encoder | #169 |
+| #80 | baseline: B3 — frozen CodeBERT | #169 |
+| #81 | baseline: cheap-baseline-first gate | #169 |
+
+### Inference pipeline (v0.3)
+| # | Title | PR |
+|---|-------|----|
+| #82 | inference: codingjepa.inference.embed | #171 |
+| #83 | inference: codingjepa.inference.index | #171 |
+| #84 | inference: codingjepa.inference.retrieve | #171 |
+| #85 | inference: codingjepa.inference.rerank | #171 |
+| #86 | inference: refusal logic | #171 |
+| #87 | inference: codingjepa.inference.confidence | #171 |
+| #88 | inference: tests/perf/test_latency.py | #171 |
+| #89 | inference: tests/inference/test_round_trip.py | #171 |
+| #90 | inference: index_id contract enforcement | #171 |
+
+### Safety checkers (v0.3)
+| # | Title | PR |
+|---|-------|----|
+| #91 | safety: side-effect-introduction checker | #170 |
+| #92 | safety: side-effect-elimination checker | #170 |
+| #93 | safety: exception-contract-change checker | #170 |
+| #94 | safety: public-api-change checker | #170 |
+| #95 | safety: async/sync-boundary-change checker | #170 |
+| #96 | safety: filter chain | #170 |
+| #98 | safety: property test for the filter chain | #170 |
+
+### Release scaffolding
+| # | Title | PR |
+|---|-------|----|
 | #125 | release: MODEL_CARD.md template | #151 |
 | #130 | release: v1.0.0 release runbook | #152 |
 
-**Next priority:** data pipeline (#34–#57) is the entire v0.1 critical path.
-Start with #34 (mirror), #39 (PyDriller pairs), #35 (chunker), #53 (manifest)
-in that order — each unblocks the next.
+---
+
+**Current test count: 871 passing, 0 failing.**
+
+**Next priority:** Demo (#100–#106), Eval harness (#107–#123), then actual training runs (#75, #76).
 
 ---
 
 ## Tracking issues (subsystem dashboards)
 
-| # | Subsystem | RFCs |
-|---|---|---|
-| #2 | [meta] tracker: spec corpus + implementation issue set bootstrap | — |
-| #3 | [Tracking] Infrastructure & reproducibility | RFC-0013, spec/02, spec/04, spec/05, spec/06, spec/07, spec/09 |
-| #4 | [Tracking] Data pipeline | RFC-0002, RFC-0004, RFC-0012, RFC-0014 |
-| #5 | [Tracking] Model stack | RFC-0003 |
-| #6 | [Tracking] Training pipeline | RFC-0008 |
-| #7 | [Tracking] Baselines | RFC-0005 |
-| #8 | [Tracking] Inference pipeline | RFC-0009, RFC-0007 |
-| #9 | [Tracking] Safety rails | RFC-0007 |
-| #10 | [Tracking] Demo & developer workflow | RFC-0006, RFC-0009 |
-| #11 | [Tracking] Evaluation harness | RFC-0010, RFC-0005 |
-| #12 | [Tracking] Paper, release, packaging | RFC-0011, RFC-0013, RFC-0014, spec/09 |
+| # | Subsystem | Status | RFCs |
+|---|---|---|---|
+| #2 | [meta] tracker: spec corpus + implementation issue set bootstrap | open | — |
+| #3 | [Tracking] Infrastructure & reproducibility | open (partial) | RFC-0013, spec/02–/09 |
+| #4 | [Tracking] Data pipeline | open (#55 remains) | RFC-0002, RFC-0004, RFC-0012, RFC-0014 |
+| #5 | [Tracking] Model stack | ✅ closed | RFC-0003 |
+| #6 | [Tracking] Training pipeline | open (#75, #76, #77 remain) | RFC-0008 |
+| #7 | [Tracking] Baselines | ✅ closed | RFC-0005 |
+| #8 | [Tracking] Inference pipeline | ✅ closed | RFC-0009, RFC-0007 |
+| #9 | [Tracking] Safety rails | ✅ closed | RFC-0007 |
+| #10 | [Tracking] Demo & developer workflow | open | RFC-0006, RFC-0009 |
+| #11 | [Tracking] Evaluation harness | open | RFC-0010, RFC-0005 |
+| #12 | [Tracking] Paper, release, packaging | open | RFC-0011, RFC-0013, RFC-0014, spec/09 |
 
 ## Milestone: v0.1 — data pipeline frozen + baselines + infrastructure ready
 
@@ -88,33 +181,34 @@ in that order — each unblocks the next.
 | #31 | ✅ | infra: data/schemas/ JSONSchemas | infra | p0 | m | spec/03 | #3 |
 | #32 | ✅ | tests: cross-artifact invariants | infra | p0 | m | spec/03 | #3 |
 | #33 | ✅ | infra: pre-commit hooks | infra | p2 | s | spec/07 | #3 |
-| #34 | 🔲 | data: codingjepa.data.mirror | data | p0 | m | RFC-0002, RFC-0014 | #4 |
-| #35 | 🔲 | data: codingjepa.data.chunker | data | p0 | l | RFC-0012, spec/03 | #4 |
-| #36 | 🔲 | data: codingjepa.data.normalize | data | p0 | m | RFC-0012 | #4 |
-| #37 | 🔲 | data: SentencePiece BPE tokenizer training | data | p0 | m | RFC-0012 | #4 |
-| #38 | 🔲 | data: tokenizer coverage audit | data | p0 | s | RFC-0012 | #4 |
-| #39 | 🔲 | data: PyDriller commit walker for refactor pairs | data | p0 | m | RFC-0002 | #4 |
+| #34 | ✅ | data: codingjepa.data.mirror | data | p0 | m | RFC-0002, RFC-0014 | #4 |
+| #35 | ✅ | data: codingjepa.data.chunker | data | p0 | l | RFC-0012, spec/03 | #4 |
+| #36 | ✅ | data: codingjepa.data.normalize | data | p0 | m | RFC-0012 | #4 |
+| #37 | ✅ | data: SentencePiece BPE tokenizer training | data | p0 | m | RFC-0012 | #4 |
+| #38 | ✅ | data: tokenizer coverage audit | data | p0 | s | RFC-0012 | #4 |
+| #39 | ✅ | data: PyDriller commit walker for refactor pairs | data | p0 | m | RFC-0002 | #4 |
 | #40 | ✅ | intents: codingjepa.intents.acceptance | data | p0 | l | RFC-0004, spec/01 | #4 |
-| #41 | 🔲 | data: labeler — extract-helper | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #42 | 🔲 | data: labeler — inline-helper | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #43 | 🔲 | data: labeler — comprehension-rewrite | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #44 | 🔲 | data: labeler — dataclass-migration | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #45 | 🔲 | data: labeler — exception-handling-cleanup | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #46 | 🔲 | data: labeler — loop-to-vectorized | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #47 | 🔲 | data: labeler — argument-defaulting | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #48 | 🔲 | data: labeler — none-typing-modernization | data | p1 | m | RFC-0002, RFC-0004 | #4 |
-| #49 | 🔲 | data: codingjepa.data.dedup | data | p0 | m | RFC-0014 | #4 |
-| #50 | 🔲 | data: codingjepa.data.splits + cross-split leakage | data | p0 | m | RFC-0014 | #4 |
-| #51 | 🔲 | data: codingjepa.data.secrets_scan | data | p0 | m | RFC-0014, spec/06 | #4 |
-| #52 | 🔲 | data: codingjepa.data.audit | data | p0 | m | RFC-0002, RFC-0014 | #4 |
-| #53 | 🔲 | data: codingjepa.data.manifest | data | p0 | s | RFC-0014, spec/03 | #4 |
-| #54 | 🔲 | data: codingjepa.data.sequences | data | p0 | s | RFC-0002, RFC-0012 | #4 |
+| #41 | ✅ | data: labeler — extract-helper | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #42 | ✅ | data: labeler — inline-helper | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #43 | ✅ | data: labeler — comprehension-rewrite | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #44 | ✅ | data: labeler — dataclass-migration | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #45 | ✅ | data: labeler — exception-handling-cleanup | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #46 | ✅ | data: labeler — loop-to-vectorized | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #47 | ✅ | data: labeler — argument-defaulting | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #48 | ✅ | data: labeler — none-typing-modernization | data | p1 | m | RFC-0002, RFC-0004 | #4 |
+| #49 | ✅ | data: codingjepa.data.dedup | data | p0 | m | RFC-0014 | #4 |
+| #50 | ✅ | data: codingjepa.data.splits + cross-split leakage | data | p0 | m | RFC-0014 | #4 |
+| #51 | ✅ | data: codingjepa.data.secrets_scan | data | p0 | m | RFC-0014, spec/06 | #4 |
+| #52 | ✅ | data: codingjepa.data.audit | data | p0 | m | RFC-0002, RFC-0014 | #4 |
+| #53 | ✅ | data: codingjepa.data.manifest | data | p0 | s | RFC-0014, spec/03 | #4 |
+| #54 | ✅ | data: codingjepa.data.sequences | data | p0 | s | RFC-0002, RFC-0012 | #4 |
 | #55 | 🔲 | data: gold subset annotation tooling + 200 pairs | data | p1 | l | RFC-0002 | #4 |
-| #56 | 🔲 | data: codingjepa.data.cli wiring | data | p0 | s | spec/02 | #4 |
-| #57 | 🔲 | data: per-intent quotas | data | p0 | s | RFC-0002 | #4 |
-| #78 | 🔲 | baseline: B1 — BM25 over BPE tokens | baselines | p0 | m | RFC-0005 | #7 |
-| #80 | 🔲 | baseline: B3 — frozen CodeBERT | baselines | p0 | m | RFC-0005, spec/06 | #7 |
-| #81 | 🔲 | baseline: cheap-baseline-first gate | baselines | p0 | s | RFC-0005 | #7 |
+| #56 | ✅ | data: codingjepa.data.cli wiring | data | p0 | s | spec/02 | #4 |
+| #57 | ✅ | data: per-intent quotas | data | p0 | s | RFC-0002 | #4 |
+| #78 | ✅ | baseline: B1 — BM25 over BPE tokens | baselines | p0 | m | RFC-0005 | #7 |
+| #79 | ✅ | baseline: B2 — MLM-encoder | baselines | p0 | l | RFC-0005 | #7 |
+| #80 | ✅ | baseline: B3 — frozen CodeBERT | baselines | p0 | m | RFC-0005, spec/06 | #7 |
+| #81 | ✅ | baseline: cheap-baseline-first gate | baselines | p0 | s | RFC-0005 | #7 |
 | #97 | ✅ | safety: stable refusal copy table | safety | p0 | s | RFC-0007, spec/04 | #9 |
 | #99 | ✅ | safety: secret pattern table | safety | p1 | s | spec/05, spec/06 | #9 |
 | #128 | 🔲 | release: PHASE-1.md note (data freeze) | release | p1 | s | spec/IMPLEMENTATION-PLAN | #12 |
@@ -124,25 +218,25 @@ in that order — each unblocks the next.
 | # | Status | Title | Area | Priority | Effort | RFC / Spec | Tracking |
 |---|--------|-------|------|----------|--------|------------|----------|
 | #17 | 🔲 | infra: Hydra config tree skeleton | infra | p1 | m | RFC-0008 | #3 |
-| #58 | 🔲 | model: codingjepa.modules.encoder | model | p0 | m | RFC-0003 | #5 |
-| #59 | 🔲 | model: codingjepa.modules.projector | model | p0 | s | RFC-0003 | #5 |
-| #60 | 🔲 | model: codingjepa.modules.ar_predictor | model | p0 | m | RFC-0003 | #5 |
-| #61 | 🔲 | model: codingjepa.modules.pred_proj | model | p0 | s | RFC-0003 | #5 |
-| #62 | 🔲 | model: codingjepa.modules.intent_embedder | model | p0 | s | RFC-0003 | #5 |
-| #63 | 🔲 | model: codingjepa.modules.sigreg | model | p0 | m | RFC-0003 | #5 |
-| #64 | 🔲 | model: codingjepa.model.CodingJEPA | model | p0 | m | RFC-0003, RFC-0008, spec/02 | #5 |
-| #65 | 🔲 | model: tiny-slice training pass | model | p0 | m | RFC-0003, RFC-0008 | #5 |
-| #66 | 🔲 | train: codingjepa.training.module | training | p0 | m | RFC-0008 | #6 |
-| #67 | 🔲 | train: codingjepa.training.manager | training | p0 | l | RFC-0008 | #6 |
-| #68 | 🔲 | train: codingjepa.training.dataloader | training | p0 | m | RFC-0008 | #6 |
-| #69 | 🔲 | train: codingjepa.training.optimizer | training | p0 | s | RFC-0008 | #6 |
-| #70 | 🔲 | train: callbacks.RankDiagnostic | training | p0 | s | RFC-0008, spec/04 | #6 |
-| #71 | 🔲 | train: callbacks.LossMonotonicity | training | p0 | s | RFC-0008, spec/04 | #6 |
-| #72 | 🔲 | train: callbacks.Checkpoint | training | p0 | s | RFC-0008 | #6 |
-| #73 | 🔲 | train: WandB integration | training | p1 | s | RFC-0008, spec/06 | #6 |
-| #74 | 🔲 | train: codingjepa.training.preflight | training | p0 | s | RFC-0008 | #6 |
-| #75 | 🔲 | train: Stage A pretrain run | training | p0 | l | RFC-0008 | #6 |
-| #79 | 🔲 | baseline: B2 — MLM-encoder | baselines | p0 | l | RFC-0005 | #7 |
+| #58 | ✅ | model: codingjepa.modules.encoder | model | p0 | m | RFC-0003 | #5 |
+| #59 | ✅ | model: codingjepa.modules.projector | model | p0 | s | RFC-0003 | #5 |
+| #60 | ✅ | model: codingjepa.modules.ar_predictor | model | p0 | m | RFC-0003 | #5 |
+| #61 | ✅ | model: codingjepa.modules.pred_proj | model | p0 | s | RFC-0003 | #5 |
+| #62 | ✅ | model: codingjepa.modules.intent_embedder | model | p0 | s | RFC-0003 | #5 |
+| #63 | ✅ | model: codingjepa.modules.sigreg | model | p0 | m | RFC-0003 | #5 |
+| #64 | ✅ | model: codingjepa.model.CodingJEPA | model | p0 | m | RFC-0003, RFC-0008, spec/02 | #5 |
+| #65 | ✅ | model: tiny-slice training pass | model | p0 | m | RFC-0003, RFC-0008 | #5 |
+| #66 | ✅ | train: codingjepa.training.module | training | p0 | m | RFC-0008 | #6 |
+| #67 | ✅ | train: codingjepa.training.manager | training | p0 | l | RFC-0008 | #6 |
+| #68 | ✅ | train: codingjepa.training.dataloader | training | p0 | m | RFC-0008 | #6 |
+| #69 | ✅ | train: codingjepa.training.optimizer | training | p0 | s | RFC-0008 | #6 |
+| #70 | ✅ | train: callbacks.RankDiagnostic | training | p0 | s | RFC-0008, spec/04 | #6 |
+| #71 | ✅ | train: callbacks.LossMonotonicity | training | p0 | s | RFC-0008, spec/04 | #6 |
+| #72 | ✅ | train: callbacks.Checkpoint | training | p0 | s | RFC-0008 | #6 |
+| #73 | ✅ | train: WandB integration | training | p1 | s | RFC-0008, spec/06 | #6 |
+| #74 | ✅ | train: codingjepa.training.preflight | training | p0 | s | RFC-0008 | #6 |
+| #75 | 🔲 | train: Stage A pretrain run (200k steps, B=64) | training | p0 | l | RFC-0008 | #6 |
+| #79 | ✅ | baseline: B2 — MLM-encoder | baselines | p0 | l | RFC-0005 | #7 |
 
 ## Milestone: v0.3 — fine-tune + retrieval + safety + inference
 
@@ -151,22 +245,22 @@ in that order — each unblocks the next.
 | #22 | 🔲 | ci: perf workflow with regression gate | infra | p1 | m | RFC-0009, spec/08 | #3 |
 | #76 | 🔲 | train: Stage B intent fine-tune run | training | p0 | l | RFC-0008 | #6 |
 | #77 | 🔲 | docs: PHASE-2.md and PHASE-3.md notes | training | p1 | s | spec/IMPLEMENTATION-PLAN | #6 |
-| #82 | 🔲 | inference: codingjepa.inference.embed | inference | p0 | s | RFC-0009 | #8 |
-| #83 | 🔲 | inference: codingjepa.inference.index | inference | p0 | m | RFC-0009, spec/03 | #8 |
-| #84 | 🔲 | inference: codingjepa.inference.retrieve | inference | p0 | m | RFC-0009 | #8 |
-| #85 | 🔲 | inference: codingjepa.inference.rerank | inference | p0 | m | RFC-0009, RFC-0007 | #8 |
-| #86 | 🔲 | inference: refusal logic | inference | p0 | s | spec/04, RFC-0007 | #8 |
-| #87 | 🔲 | inference: codingjepa.inference.confidence | inference | p1 | s | RFC-0007, RFC-0009 | #8 |
-| #88 | 🔲 | inference: tests/perf/test_latency.py | inference | p1 | m | RFC-0009, spec/08 | #8 |
-| #89 | 🔲 | inference: tests/inference/test_round_trip.py | inference | p0 | s | RFC-0009 | #8 |
-| #90 | 🔲 | inference: index_id contract enforcement | inference | p0 | s | RFC-0009, spec/04 | #8 |
-| #91 | 🔲 | safety: side-effect-introduction checker | safety | p0 | m | RFC-0007 | #9 |
-| #92 | 🔲 | safety: side-effect-elimination checker | safety | p0 | m | RFC-0007 | #9 |
-| #93 | 🔲 | safety: exception-contract-change checker | safety | p0 | m | RFC-0007 | #9 |
-| #94 | 🔲 | safety: public-api-change checker | safety | p0 | m | RFC-0007 | #9 |
-| #95 | 🔲 | safety: async/sync-boundary-change checker | safety | p0 | s | RFC-0007 | #9 |
-| #96 | 🔲 | safety: filter chain | safety | p0 | s | RFC-0007, spec/04 | #9 |
-| #98 | 🔲 | safety: property test for the filter chain | safety | p0 | m | RFC-0007 | #9 |
+| #82 | ✅ | inference: codingjepa.inference.embed | inference | p0 | s | RFC-0009 | #8 |
+| #83 | ✅ | inference: codingjepa.inference.index | inference | p0 | m | RFC-0009, spec/03 | #8 |
+| #84 | ✅ | inference: codingjepa.inference.retrieve | inference | p0 | m | RFC-0009 | #8 |
+| #85 | ✅ | inference: codingjepa.inference.rerank | inference | p0 | m | RFC-0009, RFC-0007 | #8 |
+| #86 | ✅ | inference: refusal logic | inference | p0 | s | spec/04, RFC-0007 | #8 |
+| #87 | ✅ | inference: codingjepa.inference.confidence | inference | p1 | s | RFC-0007, RFC-0009 | #8 |
+| #88 | ✅ | inference: tests/perf/test_latency.py | inference | p1 | m | RFC-0009, spec/08 | #8 |
+| #89 | ✅ | inference: tests/inference/test_round_trip.py | inference | p0 | s | RFC-0009 | #8 |
+| #90 | ✅ | inference: index_id contract enforcement | inference | p0 | s | RFC-0009, spec/04 | #8 |
+| #91 | ✅ | safety: side-effect-introduction checker | safety | p0 | m | RFC-0007 | #9 |
+| #92 | ✅ | safety: side-effect-elimination checker | safety | p0 | m | RFC-0007 | #9 |
+| #93 | ✅ | safety: exception-contract-change checker | safety | p0 | m | RFC-0007 | #9 |
+| #94 | ✅ | safety: public-api-change checker | safety | p0 | m | RFC-0007 | #9 |
+| #95 | ✅ | safety: async/sync-boundary-change checker | safety | p0 | s | RFC-0007 | #9 |
+| #96 | ✅ | safety: filter chain | safety | p0 | s | RFC-0007, spec/04 | #9 |
+| #98 | ✅ | safety: property test for the filter chain | safety | p0 | m | RFC-0007 | #9 |
 
 ## Milestone: v0.4 — demo
 
@@ -214,41 +308,38 @@ in that order — each unblocks the next.
 | #125 | ✅ | release: MODEL_CARD.md template | release | p0 | s | RFC-0013, spec/03 | #12 |
 | #126 | 🔲 | release: HF Hub upload (model + tokenizer) | release | p1 | m | RFC-0013 | #12 |
 | #127 | 🔲 | release: HF Hub upload (pairs corpus) | release | p1 | m | RFC-0014 | #12 |
+| #128 | 🔲 | release: PHASE-1.md note (data freeze) | release | p1 | s | spec/IMPLEMENTATION-PLAN | #12 |
 | #129 | 🔲 | release: PHASE-4.md / PHASE-5.md notes | release | p2 | s | spec/IMPLEMENTATION-PLAN | #12 |
 | #130 | ✅ | release: v1.0.0 release runbook | release | p1 | s | spec/09 | #12 |
 
 ## Cross-cutting dependencies
 
-These are the high-impact dependencies that affect more than one subsystem.
 ✅ = already resolved on `main`.
 
-- **✅ #13 (pyproject) blocks everything.** Nothing else can install.
-- **✅ #16 (package skeleton) blocks every code-touching issue.** Stub modules let the rest stub against real import paths.
-- **✅ #25 (errors) blocks every issue that raises typed exceptions.** Consumed by inference, training, eval, sandbox, schema validation.
-- **✅ #26 (observability) blocks every issue that emits structured logs** — training callbacks, inference, eval, demo.
+- **✅ #13 (pyproject) blocks everything.**
+- **✅ #16 (package skeleton) blocks every code-touching issue.**
+- **✅ #25 (errors) blocks every issue that raises typed exceptions.**
+- **✅ #26 (observability) blocks every issue that emits structured logs.**
 - **✅ #31 (JSONSchemas) blocks every issue that writes a persisted artifact.**
-- **✅ #40 (`codingjepa.intents.acceptance`) blocks every labeler (#41–#48), the inference rerank (#85), the eval scoring (in #110 and elsewhere), and the safety property tests.** Single source of truth contract is enforced by `tests/test_acceptance_singleton.py`.
-- **#52 (audit) gates the data pipeline.** No training launches if any of `compile_ok_rate`, `duplication_rate`, `secret_scanner_hits` fail.
-- **#53 (manifest) gates training and inference.** Both refuse to run without `data/manifest.lock.json`.
-- **#74 (training preflight) gates Stage A.** Cheap-baselines-first (#81), tiny-slice (#65), tokenizer artifact (#37), manifest (#53), all verified before launch.
-- **#75 (Stage A pretrain run) blocks #76 (Stage B), the FAISS index build (#83), and inference (#82–#86).**
-- **✅ #116 (pools) + ✅ #117 (stats) + ✅ #118 (results.schema) + ✅ #122 (hash-check enforcer) unblock every CJ-* benchmark (#108–#115).** Still need #107 (eval harness full implementation).
-- **✅ #125 (MODEL_CARD) gates the v1.0 release** and the hash-check enforcer.
+- **✅ #40 (`codingjepa.intents.acceptance`) blocks labelers, rerank, eval scoring, safety property tests.**
+- **✅ #52 (audit) gates the data pipeline.**
+- **✅ #53 (manifest) gates training and inference.**
+- **✅ #74 (training preflight) gates Stage A** — checks baselines-first, tiny-slice, tokenizer, manifest.
+- **#75 (Stage A pretrain run) blocks #76 (Stage B), the FAISS index build, and live inference.**
+- **✅ #116 + #117 + #118 + #122 unblock every CJ-* benchmark (#108–#115)** — still need #107 (eval harness).
+- **✅ #125 (MODEL_CARD) gates the v1.0 release.**
 
 ## Open questions surfaced by the spec
 
-These remain `OPEN QUESTION`s in the corpus; they do not block v1 critical path but are tracked for visibility.
-
-- **OQ-A.** Whether to ship a thin re-implementation of `stable_pretraining` rather than carrying it as a hard dep (RFC-0013 §D3). Decision lives in #67. **Owner: training subsystem.**
-- **OQ-B.** Whether B4 (CodeT5+ embeddings) is included in v1 results. Currently optional (RFC-0005 §D5). **Owner: baselines subsystem (#7).**
-- **OQ-C.** Whether `Devign` Python subset is available; if not, a synthetic mutation-defect set replaces it (RFC-0010 §E6 / #114). **Owner: eval subsystem (#11).**
-- **OQ-D.** Whether `BigCloneBench` Python subset is available; if not, the clone-detection probe is reported as N/A (RFC-0010 §E6 / #114). **Owner: eval subsystem (#11).**
-- **OQ-E.** Whether `nsjail` or `firejail` is the sandbox backend (#111). Either is acceptable per RFC-0013 §D7. **Owner: eval subsystem (#11).**
-- **OQ-F.** Whether the demo UI vendors HTMX or pulls it from a CDN (#103 currently vendors per the supply-chain rule in spec/06). **Owner: demo subsystem (#10).**
+- **OQ-A.** `stable_pretraining` dep vs. thin re-implementation (RFC-0013 §D3). Owner: training (#6).
+- **OQ-B.** Whether B4 (CodeT5+ embeddings) is included in v1 results. Currently optional. Owner: #7.
+- **OQ-C.** Whether `Devign` Python subset is available. Owner: eval (#11).
+- **OQ-D.** Whether `BigCloneBench` Python subset is available. Owner: eval (#11).
+- **OQ-E.** `nsjail` vs. `firejail` sandbox backend (#111). Owner: eval (#11).
+- **OQ-F.** HTMX vendored vs. CDN (#103). Owner: demo (#10).
 
 ## Notes for maintainers
 
-- Labels (`type:*`, `area:*`, `priority:*`, `effort:*`, `spec:*`) were applied at issue-create time and auto-created on first use.
-- Milestones (`v0.1` through `v1.0`) are recorded in each issue's `Metadata` block; create them in GitHub and re-assign the issues using this table.
-- Sub-issue links (parent/child via the GitHub `sub_issue_write` API) were not applied in the bootstrap; the `Tracking` column links the dashboard issue.
+- Labels (`type:*`, `area:*`, `priority:*`, `effort:*`, `spec:*`) were applied at issue-create time.
+- Sub-issue links (parent/child) were not applied in the bootstrap; the `Tracking` column links the dashboard issue.
 - Re-deriving this tracker after an RFC amendment: change the affected RFC, re-derive the affected issues, append a row noting the amendment date.
