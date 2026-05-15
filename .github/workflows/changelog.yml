@@ -1,0 +1,40 @@
+name: changelog
+
+on:
+  pull_request:
+    paths:
+      - "codingjepa/**"
+      - "data/schemas/**"
+      - "docs/spec/02-public-api.md"
+
+permissions:
+  contents: read
+
+jobs:
+  changelog-entry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require an [Unreleased] CHANGELOG entry
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          if ! git diff --name-only "$base" "$head" | grep -qx "CHANGELOG.md"; then
+            echo "::error file=CHANGELOG.md::This PR touches codingjepa/, data/schemas/, or docs/spec/02-public-api.md but does not modify CHANGELOG.md."
+            echo "Add an entry under the [Unreleased] heading. See spec/09 §Changelog discipline."
+            exit 1
+          fi
+
+          # Confirm CHANGELOG.md has a non-empty [Unreleased] section *after* this PR.
+          if ! git show "$head:CHANGELOG.md" | awk '
+            /^## \[Unreleased\]/ {in_unreleased = 1; next}
+            /^## \[/ {in_unreleased = 0}
+            in_unreleased && /^- / {found = 1}
+            END {exit !found}
+          '; then
+            echo "::error file=CHANGELOG.md::[Unreleased] section is empty. Add at least one bullet under one of: Added, Changed, Deprecated, Removed, Fixed, Security, Reproducibility."
+            exit 1
+          fi
