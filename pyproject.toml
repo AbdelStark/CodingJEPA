@@ -25,6 +25,10 @@ dependencies = [
     "libcst",
     "sentencepiece",
     "pydriller",
+    # Normalization toolchain (RFC-0012 §D5): black + isort are runtime deps because
+    # `codingjepa.data.normalize` calls them on every chunk during dataset assembly.
+    "black",
+    "isort>=5",
     # Retrieval and baselines.
     "faiss-cpu",
     "rank_bm25",
@@ -41,7 +45,6 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "ruff",
-    "black",
     "mypy",
     # scipy is dev-only: codingjepa.eval.stats is a numpy-only implementation;
     # scipy is used by the bootstrap comparison test (RFC-0010 §D7 acceptance).
