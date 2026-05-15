@@ -1,0 +1,53 @@
+name: safety
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.8.17"
+
+      - name: Restore uv cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-
+
+      - name: Install firejail (sandbox backend)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y firejail
+
+      - name: Install dependencies (frozen)
+        run: uv sync --frozen
+
+      - name: pytest safety + sandbox
+        run: |
+          paths=""
+          [ -d tests/safety ] && paths="$paths tests/safety"
+          [ -d tests/sandbox ] && paths="$paths tests/sandbox"
+          if [ -z "$paths" ]; then
+            echo "No safety/sandbox tests yet — workflow will pass trivially until #98 / #111 land."
+            exit 0
+          fi
+          uv run pytest -m "not slow" $paths --maxfail=3 --tb=short
