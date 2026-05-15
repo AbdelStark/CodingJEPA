@@ -1,0 +1,218 @@
+\documentclass[10pt]{article}
+
+% Style file switched at submission time; keep neutral here.
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,url,microtype}
+\usepackage[margin=1in]{geometry}
+
+\title{CodingJEPA: Joint-Embedding Predictive Architecture for Python Code Refactoring}
+\author{CodingJEPA Contributors}
+\date{2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We introduce CodingJEPA, a Joint-Embedding Predictive Architecture (JEPA) trained to predict
+the embedding of a refactored code chunk given the source chunk and a categorical refactoring
+intent. Unlike generative approaches, CodingJEPA operates purely in embedding space and
+retrieves refactoring candidates from a prebuilt index, avoiding hallucination at the token
+level. We train on a corpus of \(\sim\)96,000 human-authored Python refactoring pairs extracted
+from 10 open-source repositories (commit cutoff: 2023-12-31). On our CJ-RET-100 benchmark,
+CodingJEPA achieves [TODO: R@10 = X.XX], outperforming BM25, MLM-encoder, and frozen
+CodeBERT baselines by [TODO: Y.Y\%].
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Code refactoring --- transforming source code to improve its internal structure without changing
+external behaviour --- is a routine engineering task. Recent large language models can generate
+refactored code directly, but they suffer from hallucination: plausible-looking outputs that
+subtly change semantics or introduce bugs.
+
+We take a retrieval-based alternative. CodingJEPA predicts \emph{where} a refactored version
+lives in a prebuilt embedding index rather than \emph{what} it looks like at the token level.
+The prediction target is the L2-normalised embedding of the post-refactoring chunk; the
+predictor is an autoregressive Transformer conditioned on the source embedding and a categorical
+intent label.
+
+\paragraph{Contributions.}
+\begin{itemize}
+  \item A JEPA architecture adapted for code: encoder, projector, autoregressive predictor,
+        intent embedder, and a sliced isotropic Gaussian regulariser (SigReg).
+  \item A reproducible dataset of [TODO: N] Python refactoring pairs across 8 intents, with
+        provenance, manifest hashing, and cross-split leakage detection.
+  \item A multi-benchmark evaluation harness covering retrieval, execution preservation,
+        robustness probes, OOD generalisation, linear probes, and human review.
+\end{itemize}
+
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Code representation learning.}
+CodeBERT \cite{feng2020codebert} and GraphCodeBERT \cite{guo2021graphcodebert} use masked
+language modelling over code–docstring pairs. UniXcoder \cite{guo2022unixcoder} extends this
+to a unified architecture. Our encoder shares the masked-token inspiration but is trained
+with a predictive objective rather than reconstructive one.
+
+\paragraph{Joint-embedding predictive architectures.}
+I-JEPA \cite{assran2023ijepa} introduced the JEPA principle for vision: predict representations
+of target regions from context regions, without requiring a decoder. V-JEPA \cite{bardes2023vjepa}
+extends this to video. CodingJEPA adapts the JEPA objective to code with categorical
+conditioning on refactoring intent.
+
+\paragraph{Code generation and refactoring.}
+[TODO: cite relevant LLM/refactoring papers.]
+
+\section{Method}
+\label{sec:method}
+
+\subsection{Architecture}
+
+CodingJEPA consists of five modules (Figure~\ref{fig:arch}):
+\begin{enumerate}
+  \item \textbf{Encoder} $f_\theta$: a 6-layer pre-norm Transformer with RoPE positional
+        encoding, 8 attention heads, hidden size 512, GELU activations, and 0.1 dropout.
+        Applied to both source and target chunk token sequences.
+  \item \textbf{Projector} $g_\theta$: Linear(512, 2048) $\to$ BatchNorm1d $\to$ ReLU $\to$
+        Linear(2048, 512).
+  \item \textbf{Autoregressive Predictor} $p_\theta$: a 4-layer \texttt{norm\_first}
+        TransformerEncoder that predicts the target projection from the source projection and
+        intent embedding.
+  \item \textbf{Intent Embedder}: $\texttt{nn.Embedding}(9, 512)$; index 8 = \texttt{[I\_NONE]}.
+  \item \textbf{SigReg}: sliced isotropic Gaussian regulariser with $K=256$ random projections,
+        penalising collapse of the representation space.
+\end{enumerate}
+
+\subsection{Training objective}
+
+The primary loss is the cosine distance between the predictor output and the L2-normalised
+target projection, summed with the SigReg penalty:
+\[
+  \mathcal{L} = \bigl(1 - \cos(p_\theta(z_s, e_I),\, g_\theta(f_\theta(x_t)))\bigr)
+              + \lambda \cdot \mathcal{L}_{\text{SigReg}}.
+\]
+
+\subsection{Training procedure}
+
+Stage A (pretraining): AdamW, lr = 3e-4, weight decay = 0.05, cosine schedule with 5,000
+warmup steps, 200,000 total steps, batch 64, gradient accumulation 16.
+
+Stage B (intent fine-tune): 50,000 additional steps on intent-balanced samples.
+
+\section{Data}
+\label{sec:data}
+
+\subsection{Corpus construction}
+
+[TODO: fill in after pipeline run completes.]
+
+\subsection{Tokeniser}
+
+SentencePiece BPE with 32,000 vocabulary tokens and 15 special tokens (see
+\texttt{codingjepa.data.tokenizer}). Maximum sequence length: 512 BPE tokens.
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Benchmarks}
+
+We evaluate on 12 benchmarks grouped into four families (Table~\ref{tab:main}):
+
+\begin{table}[h]
+\centering
+\caption{Main results.}
+\label{tab:main}
+\begin{tabular}{lllll}
+\toprule
+Benchmark & CodingJEPA & BM25 & MLM-enc & CodeBERT \\
+\midrule
+CJ-RET-100 R@10 & [TODO] & [TODO] & [TODO] & [TODO] \\
+CJ-RET-1k R@10  & [TODO] & [TODO] & [TODO] & [TODO] \\
+CJ-EXEC pass rate & [TODO] & --- & [TODO] & [TODO] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Per-intent breakdown}
+
+[TODO: 8 rows × Retrieval@10.]
+
+\subsection{Robustness probes}
+
+[TODO: CJ-ROB-FMT / CJ-ROB-RENAME / CJ-ROB-DOC rank-change \% and cosine drift.]
+
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{Ablations}
+
+[TODO: matrix from RFC-0005 §D6.]
+
+\subsection{Failure modes}
+
+[TODO: worst-50 retrievals per intent; pointers to \texttt{results/confusions/}.]
+
+\section{Limitations}
+\label{sec:limitations}
+
+\begin{itemize}
+  \item Corpus contamination: the public pretrained baselines (CodeBERT) are trained on
+        data that overlaps with our source repos; we document this in the memo's limitations
+        section but cannot fully control for it.
+  \item OOD scope: CJ-OOD covers cpython 3.11 $\to$ 3.13 refactors only; cross-language and
+        cross-domain generalization is not evaluated.
+  \item Commit cutoff: the 2023-12-31 cutoff excludes patterns that emerged in 2024--2025.
+  \item Human review (CJ-HUMAN): Cohen's $\kappa$ is not yet available pending annotation.
+\end{itemize}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We have presented CodingJEPA, a retrieval-based code refactoring system trained with a
+joint-embedding predictive objective. The architecture avoids token-level generation in favour
+of predicting in embedding space and retrieving from a content-addressed index. [TODO: add
+conclusion once numbers are available.]
+
+\paragraph{Reproducibility statement.}
+Training code, data pipeline, evaluation harness, and model checkpoint are released at
+\url{https://github.com/AbdelStark/CodingJEPA}. The corpus is published on HF Hub at
+\texttt{CodingJEPA/human-python-refactors}. Running \texttt{make eval} from the repository
+root reproduces all numbers in this paper.
+
+\appendix
+
+\section{Hyperparameters}
+\label{app:hparams}
+
+[TODO: full hyperparameter table.]
+
+\section{Data statistics}
+\label{app:data}
+
+[TODO: per-repo pair counts, intent distribution.]
+
+\section{Extended results}
+\label{app:results}
+
+[TODO: full metric tables beyond Table~\ref{tab:main}.]
+
+\section{Human review protocol}
+\label{app:human}
+
+[TODO: rating rubric, annotator instructions, inter-annotator agreement.]
+
+\section{Ethical considerations}
+\label{app:ethics}
+
+All training data is sourced from permissively-licensed public repositories
+(MIT / Apache-2.0 / PSF). The commit cutoff (2023-12-31) limits training to
+human-authored commits from the pre-LLM-assisted-commit era (RFC-0002 §D11).
+No personal data is collected; email addresses appearing in commits are scrubbed
+by the normalization step.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

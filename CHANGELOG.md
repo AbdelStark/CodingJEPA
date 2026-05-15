@@ -9,6 +9,14 @@ per `docs/spec/09-release-and-versioning.md`.
 ## [Unreleased]
 
 ### Added
+- **CI + docs** (#21, #124, #128, #129, PR #200):
+  - `.github/workflows/eval-smoke.yml` — runs `pytest -m eval-smoke` on push/PR; times out at 5 min (#21).
+  - `paper/main.tex` — full paper skeleton with all RFC-0011 §D4 sections (Abstract through Appendix A–E) (#124).
+  - `paper/refs.bib` — BibTeX stubs for CodeBERT, GraphCodeBERT, UniXcoder, I-JEPA, V-JEPA.
+  - `paper/Makefile` — `make -C paper` builds PDF with `latexmk`.
+  - `docs/notes/PHASE-1.md` — data pipeline notes: corpus summary, audit gates, dedup, leakage (#128).
+  - `docs/notes/PHASE-4.md` — demo subsystem notes (#129).
+  - `docs/notes/PHASE-5.md` — eval harness notes (#129).
 - **Phase 8 — Evaluation harness** (#107–#123, PR #198):
   - `codingjepa.eval.harness` — `Benchmark` ABC with `prepare/run/score`, `BenchmarkResult` dataclass, `run_suite` orchestrator (writes per-benchmark JSON + `results/results.json`).
   - `codingjepa.eval.benchmarks.ret` — `CJ-RET-100` / `CJ-RET-1k`: FAISS `IndexFlatIP` retrieval, R@1/R@5/R@10/MRR.
