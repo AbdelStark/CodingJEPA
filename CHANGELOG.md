@@ -9,6 +9,10 @@ per `docs/spec/09-release-and-versioning.md`.
 ## [Unreleased]
 
 ### Added
+- **License compliance** (#30):
+  - `LICENSES/` — verbatim SPDX texts for every license used by the corpus (`Apache-2.0`, `BSD-3-Clause`, `MIT`, `PSF-2.0`).
+  - `tools/notice_gen.py` — generate a deterministic `NOTICE` from `data/manifest.lock.json`, listing each upstream repo's SPDX identifier, commit SHA, and copyright.
+  - `tests/tools/test_notice_gen.py` — unit tests covering missing-manifest exit code, copyright fallback, determinism, and default paths.
 - `.github/workflows/perf.yml` — P50/P95 regression gate (±20%) for inference latency; skips gracefully on CPU-only runners (#22).
 - `.github/workflows/nightly.yml` — daily 02:00 UTC slow-marker test run + ML diagnostics; auto-comments on #3 on failure (#23).
 - **CI + docs** (#21, #124, #128, #129, PR #200):
