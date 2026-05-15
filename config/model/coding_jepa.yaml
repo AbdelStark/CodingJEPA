@@ -1,0 +1,57 @@
+# CodingJEPA model config (RFC-0003 §D1–§D6, RFC-0008 §D11).
+#
+# Wires the full architecture: encoder + projector + ar_predictor + pred_proj +
+# intent_embedder + sigreg. Mirrors the defaults in
+# ``codingjepa.model.build_model``.
+#
+# To instantiate via ``hydra.utils.instantiate``, the consumer must pass:
+#   model = hydra.utils.instantiate(cfg.model)
+# which calls ``build_model(**hydra-resolved kwargs)``.
+
+_target_: codingjepa.model.build_model
+
+# Shared dimension across encoder / projector / predictor (RFC-0003 §D1).
+hidden_size: 512
+vocab_size: 32015
+
+# Predictor history length H and number of predicted steps (RFC-0003 §D3, §D7).
+history_len: 3
+n_preds: 1
+
+# SIGReg weight λ on the total loss (RFC-0003 §D6, RFC-0008 §D3).
+sigreg_lambda: 0.05
+
+# Architecture toggles used by ablations.
+#   intent     — when False, the intent embedder is bypassed (no-intent ablation).
+#   projector  — when False, the projector MLP is removed (no-projector ablation).
+# The training pipeline is responsible for honouring these flags; the build
+# factory always returns a fully-wired model.
+intent: true
+projector: true
+
+# Encoder block (RFC-0003 §D1).
+encoder:
+  n_layers: 6
+  n_heads: 8
+  ffn_dim: 2048
+  dropout: 0.1
+  max_seq_len: 512
+  activation: gelu
+  positional_encoding: rope
+
+# Projector MLP (RFC-0003 §D2).
+projector_mlp:
+  input_dim: 512
+  hidden_dim: 2048
+  output_dim: 512
+
+# Autoregressive predictor (RFC-0003 §D3).
+ar_predictor:
+  n_layers: 4
+  n_heads: 8
+  ffn_dim: 2048
+  dropout: 0.1
+
+# Intent embedder (RFC-0003 §D5).
+intent_embedder:
+  n_intents: 9  # 8 named intents + [I_NONE] at index 8.

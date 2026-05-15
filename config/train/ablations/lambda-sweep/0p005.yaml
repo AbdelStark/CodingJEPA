@@ -1,0 +1,9 @@
+# @package _global_
+# λ-sweep: SIGReg weight 0.005 (RFC-0008 §D3 alternates).
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+loss:
+  lambda_: 0.005

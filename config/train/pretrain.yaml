@@ -1,0 +1,44 @@
+# @package _global_
+# Stage A pretrain config (RFC-0008 §D2 / §D4 / §D11).
+#
+# Top-level pretrain config: composes the model, optimizer, loss, and data
+# sub-configs and adds the Stage A schedule (200k steps, 5k warmup, batch 64,
+# grad accum 16).
+#
+# The ``# @package _global_`` directive on the first line tells Hydra to
+# place this file's contents at the *root* of the composed config rather than
+# nesting them under ``train.``. That keeps the ``cfg.model`` / ``cfg.optimizer``
+# / ``cfg.train`` access pattern (sibling top-level keys) consistent regardless
+# of whether the entry point was ``config.yaml`` or ``train/pretrain``.
+#
+# To launch from the CLI:
+#   uv run python -m codingjepa.training +train=pretrain
+
+defaults:
+  - /model: coding_jepa
+  - /optimizer: adamw
+  - /loss: sigreg
+  - /data: pretrain
+  - _self_
+
+train:
+  stage: pretrain
+
+  # RFC-0008 §D2 — schedule.
+  total_steps: 200000
+  warmup_steps: 5000
+  batch_size: 64
+  grad_accum: 16
+
+  # RFC-0008 §D4 — LR scheduler floor (cosine to ``min_lr``).
+  min_lr: 1.0e-5
+
+  # RFC-0008 §D4 — gradient clipping + mixed precision.
+  grad_clip: 1.0
+  precision: bf16
+
+  # RFC-0008 §D7 — collapse-gate cadence.
+  rank_gate_every_n_steps: 5000
+
+  # RFC-0008 §D9 — reproducibility.
+  seed: 42

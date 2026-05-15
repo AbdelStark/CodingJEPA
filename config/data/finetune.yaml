@@ -1,0 +1,21 @@
+# Stage B finetune data config (RFC-0008 §D2, §D5).
+#
+# Builds an intent-balanced DataLoader over labeled refactor pairs. Each row
+# carries ``before_ids``, ``after_ids``, ``intent_idx`` (RFC-0002).
+
+_target_: codingjepa.training.dataloader.build_finetune_dataloader
+
+# Default source — overridable from the CLI.
+parquet_path: data/pairs/v1.parquet
+
+# Refactor pairs are 2-chunk sequences (chunk_before, chunk_after).
+max_length: 512
+n_intents: 8  # 8 named refactor intents (RFC-0004).
+
+# DataLoader knobs.
+batch_size: 32
+num_workers: 8
+seed: 42
+
+# Sampling regime — Stage B uses WeightedRandomSampler for intent balance.
+intent_balanced: true

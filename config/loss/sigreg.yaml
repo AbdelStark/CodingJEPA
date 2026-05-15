@@ -1,0 +1,22 @@
+# SIGReg loss config (RFC-0003 §D6, RFC-0008 §D3).
+#
+# Wires the Sliced Isotropic Gaussian Regularizer applied to the projector
+# output. The single hyperparameter ``lambda_`` weights the SIGReg term in the
+# total loss:
+#
+#   loss = pred_loss + lambda_ * sigreg_loss
+#
+# Note: YAML keys can't be the bare reserved word ``lambda``; we use
+# ``lambda_`` here and the training code reads it under that name. The
+# ``enabled`` flag is used by the ``no-sigreg`` ablation to skip the term.
+
+_target_: codingjepa.modules.sigreg.SIGReg
+
+enabled: true
+lambda_: 0.05
+
+# K random unit directions resampled each step (RFC-0003 §D6).
+n_slices: 256
+
+# Per-axis target variance is 1/d for N(0, 1/d); set by ``embed_dim``.
+embed_dim: 512

@@ -1,0 +1,13 @@
+# @package _global_
+# Ablation: remove the projector MLP (RFC-0008 §D11).
+#
+# Pretrain config that skips the shared projector. Encoder output is fed
+# directly to the predictor + SIGReg path. Tests whether projector capacity is
+# necessary for non-collapsed representations.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  projector: false

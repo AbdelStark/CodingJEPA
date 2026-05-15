@@ -1,0 +1,13 @@
+# @package _global_
+# Ablation: disable intent conditioning (RFC-0008 §D11).
+#
+# Pretrain config that bypasses the intent embedder. The training pipeline
+# should substitute the all-NONE intent embedding for every position when
+# ``model.intent`` is false (equivalent to Stage A's unconditional pretraining).
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  intent: false

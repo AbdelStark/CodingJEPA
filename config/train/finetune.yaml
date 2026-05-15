@@ -1,0 +1,39 @@
+# @package _global_
+# Stage B finetune config (RFC-0008 §D2 / §D8 / §D11).
+#
+# Loaded from a Stage A checkpoint with a fresh optimizer state and a fresh
+# 5k-step warmup. Effective batch 512 (B=32, grad accum = 16); 50k steps total.
+# ``# @package _global_`` ensures the composed result has ``cfg.model`` /
+# ``cfg.optimizer`` / ``cfg.train`` at the top level (see ``train/pretrain.yaml``).
+
+defaults:
+  - /model: coding_jepa
+  - /optimizer: adamw
+  - /loss: sigreg
+  - /data: finetune
+  - _self_
+
+train:
+  stage: finetune
+
+  # RFC-0008 §D2 — schedule.
+  total_steps: 50000
+  warmup_steps: 5000
+  batch_size: 32
+  grad_accum: 16
+
+  # RFC-0008 §D4.
+  min_lr: 1.0e-5
+  grad_clip: 1.0
+  precision: bf16
+
+  # RFC-0008 §D8 — Stage B initialisation.
+  init_from_checkpoint: null   # path to Stage A checkpoint (CLI override).
+  reset_optimizer: true
+  reset_warmup: true
+
+  # RFC-0008 §D7 — collapse-gate cadence.
+  rank_gate_every_n_steps: 5000
+
+  # RFC-0008 §D9 — reproducibility.
+  seed: 42

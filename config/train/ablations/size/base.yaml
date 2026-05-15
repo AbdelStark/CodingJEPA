@@ -1,0 +1,12 @@
+# @package _global_
+# Size sweep: base encoder (hidden=512, RFC-0008 §D11 default).
+#
+# Matches the canonical Stage A baseline. Included for parity / regression
+# tracking inside the sweep.
+
+defaults:
+  - /train/pretrain
+  - _self_
+
+model:
+  hidden_size: 512
