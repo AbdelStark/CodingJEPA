@@ -1,8 +1,7 @@
-"""Compiled regexes for the secret-pattern redactor (spec/05 §Redaction).
-
-Minimal v0.1 set; the full curated table is the deliverable of #99. The patterns
-below cover the four families spec/05 names: AWS access keys, GitHub PATs, JWTs,
-and bare ≥32-char hex strings (other than the known-hash whitelist).
+"""Compiled regexes for the secret-pattern redactor (spec/05 §Redaction) and the
+data-pipeline secret scanner (spec/06 §T4). Closed set; adding a pattern is an
+RFC amendment. ``tests/test_secret_patterns.py`` enforces the closure with
+≥3 positive + ≥3 negative fixtures per pattern.
 """
 
 from __future__ import annotations
@@ -15,6 +14,13 @@ SECRET_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("github_oauth", re.compile(r"\bgho_[A-Za-z0-9]{36}\b")),
     ("github_app", re.compile(r"\b(?:ghu_|ghs_)[A-Za-z0-9]{36}\b")),
     ("jwt", re.compile(r"\beyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b")),
+    (
+        "ssh_private_key",
+        re.compile(
+            r"-----BEGIN (?:OPENSSH|RSA|DSA|EC|PGP|ENCRYPTED) PRIVATE KEY-----"
+            r"[\s\S]*?-----END (?:OPENSSH|RSA|DSA|EC|PGP|ENCRYPTED) PRIVATE KEY-----"
+        ),
+    ),
     ("hex_secret", re.compile(r"\b[0-9a-fA-F]{32,}\b")),
 )
 
