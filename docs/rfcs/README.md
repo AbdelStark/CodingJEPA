@@ -8,6 +8,7 @@ These RFCs lock the design before implementation grows. Read them in order. Each
 - [RFC-0002 — Dataset mining and intent labeling](RFC-0002-dataset-mining-and-intent-labeling.md)
 - [RFC-0012 — Code chunking and tokenization](RFC-0012-code-chunking-and-tokenization.md)
 - [RFC-0014 — Licensing, deduplication, data ethics](RFC-0014-licensing-dedup-data-ethics.md)
+- [RFC-0015 — Dataset release and HF publication](RFC-0015-dataset-release-and-hf-publication.md)
 
 ## Modeling
 

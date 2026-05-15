@@ -82,6 +82,26 @@ Within a sequence, intent embedding is fixed to `[I_NONE]`.
 ### D10 — Provenance
 Every pair carries its provenance: `(repo, commit_sha_before, commit_sha_after, file_path, node_qualname, intent_label, labeler_version)`. Provenance is the join key for downstream auditing.
 
+### D11 — Commit date ceiling (human-era cutoff)
+The commit walk **stops at 2023-12-31 23:59:59 UTC** (inclusive). Only commits whose `author_date` falls on or before this timestamp are eligible for pair extraction.
+
+Rationale: by end-of-2023 LLMs had not yet reached the capability or adoption level where they would routinely author meaningful changes in the curated OSS repos on this list. Cutting at this boundary makes the corpus verifiably human-authored and ensures it can serve as a clean pre-LLM reference for future comparisons.
+
+Implementation: PyDriller's `to_commit` / `since_as_filter` / `to_as_filter` kwargs are not reliable across all git histories; instead, filter in the commit loop:
+
+```python
+from datetime import datetime, timezone
+
+CUTOFF = datetime(2024, 1, 1, tzinfo=timezone.utc)   # exclusive upper bound
+
+for commit in Repository(repo_path, only_modifications_with_file_types=[".py"]).traverse_commits():
+    if commit.author_date.replace(tzinfo=timezone.utc) >= CUTOFF:
+        continue
+    # ... existing extraction logic
+```
+
+The cutoff date is stored in `data/manifest.lock.json` under key `"commit_cutoff_utc": "2023-12-31T23:59:59Z"` for full reproducibility.
+
 ## Deferred items
 
 - Cross-file refactor detection (move-function-across-modules) — v2.
