@@ -26,6 +26,8 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from codingjepa.errors import ConfigError
+
 if TYPE_CHECKING:  # pragma: no cover - import-cycle / type-only imports
     from codingjepa.model import CodingJEPA
 
@@ -219,4 +221,36 @@ def run_preflight(
     return results
 
 
-__all__ = ["PreflightError", "run_preflight"]
+def check_baselines_first(
+    baselines_dir: Path = Path("data/baselines"),
+) -> None:
+    """Refuse to start training if any baseline metrics JSON is missing.
+
+    RFC-0005 §D9 requires that BM25, MLM-encoder, and CodeBERT baselines
+    are computed and stored *before* the JEPA model is trained, so that
+    the first checkpoint is immediately comparable to all three baselines.
+
+    Parameters
+    ----------
+    baselines_dir:
+        Root directory under which the three ``results.json`` files are
+        expected.  Defaults to ``data/baselines``.
+
+    Raises
+    ------
+    ConfigError
+        With message ``"baseline missing"`` if any of the three expected
+        files is absent from *baselines_dir*.
+    """
+    baselines_dir = Path(baselines_dir)
+    required = [
+        baselines_dir / "bm25" / "results.json",
+        baselines_dir / "mlm_encoder" / "results.json",
+        baselines_dir / "codebert" / "results.json",
+    ]
+    for path in required:
+        if not path.exists():
+            raise ConfigError("baseline missing", path=str(path))
+
+
+__all__ = ["PreflightError", "check_baselines_first", "run_preflight"]
