@@ -5,7 +5,7 @@ PYTHON ?= python
 UV ?= uv
 
 .DEFAULT_GOAL := help
-.PHONY: help data pretrain finetune eval demo smoke lint test clean-artifacts
+.PHONY: help data pretrain finetune eval eval-docker demo smoke lint test clean-artifacts
 
 help:  ## List every Makefile target.
 	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make <target>\n\nTargets:\n"} \
@@ -28,6 +28,9 @@ finetune:  ## Run Stage B (intent-conditioned fine-tune). RFC-0008.
 
 eval:  ## Run the full eval harness. RFC-0010.
 	$(PYTHON) -m codingjepa eval
+
+eval-docker:  ## Build the reproducible eval image from Dockerfile.eval. See docs/spec/09 §Eval image.
+	docker build -f Dockerfile.eval -t codingjepa-eval:test .
 
 demo:  ## Launch the FastAPI + HTMX demo on http://localhost:8080. RFC-0006.
 	$(PYTHON) -m codingjepa demo
