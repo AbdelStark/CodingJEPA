@@ -1,16 +1,26 @@
-"""Eval harness hash-check enforcer. RFC-0010 §D1, spec/04 exit code 4.
+"""Eval harness hash-check enforcer + Benchmark base class. RFC-0010 §D1, §D8.
 
 `make eval` refuses to run if any of the manifest, checkpoint, or index hashes
 drift from the values recorded in `MODEL_CARD.md`. The diff is printed before
 the CLI exits with code 4 (mapped from any of the `*HashMismatch` exceptions
 in `codingjepa.errors`).
+
+The :class:`Benchmark` ABC and :func:`run_suite` orchestrator implement
+RFC-0010 §D8 — every benchmark exposes ``prepare`` / ``run`` / ``score`` and
+derives its own seed from ``sha256(benchmark_id + global_seed)`` so changing
+one benchmark does not shuffle the others.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import pathlib
 import re
-from dataclasses import dataclass
+import time
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import Any
 
 from codingjepa.errors import (
     ArtifactError,
@@ -133,10 +143,101 @@ def hash_triple_from_model_card(path: pathlib.Path | str) -> HashTriple:
     )
 
 
+# ---- Benchmark base + orchestrator (RFC-0010 §D8) --------------------------
+
+
+@dataclass
+class BenchmarkResult:
+    """The atomic output of a single benchmark run. Serialized verbatim into
+    ``<out_dir>/<benchmark_id>.json``."""
+
+    benchmark_id: str
+    metrics: dict[str, float | int | str | None]
+    meta: dict[str, Any] = field(default_factory=dict)
+    elapsed_seconds: float = 0.0
+
+
+class Benchmark(ABC):
+    """Base class for all CodingJEPA benchmarks.
+
+    Subclasses set the class attribute ``benchmark_id`` (e.g. ``"CJ-RET-100"``)
+    and implement ``prepare`` and ``run``. The constructor derives a
+    deterministic per-benchmark seed from ``sha256(benchmark_id + global_seed)``
+    so individual benchmarks can be re-run independently without shuffling the
+    others.
+    """
+
+    benchmark_id: str = "CJ-BASE"
+    seed: int = 0
+
+    def __init__(self, global_seed: int = 0) -> None:
+        if type(self) is Benchmark:
+            raise TypeError("Benchmark is abstract; subclass it")
+        h = hashlib.sha256(f"{self.benchmark_id}:{global_seed}".encode()).hexdigest()
+        self.seed = int(h[:8], 16)
+
+    @abstractmethod
+    def prepare(self, data_dir: pathlib.Path) -> None:
+        """Materialize the fixture this benchmark needs (read files, sample
+        synthetic data, etc.). Called once before :meth:`run`."""
+
+    @abstractmethod
+    def run(self) -> BenchmarkResult:
+        """Compute the benchmark metrics and return a :class:`BenchmarkResult`."""
+
+    def score(self, result: BenchmarkResult) -> BenchmarkResult:
+        """Optional post-processing hook. Default: return ``result`` unchanged."""
+
+        return result
+
+
+def run_suite(
+    benchmarks: list[Benchmark],
+    data_dir: pathlib.Path,
+    out_dir: pathlib.Path,
+    *,
+    global_seed: int = 0,
+) -> dict[str, Any]:
+    """Run every benchmark, write per-benchmark JSON, return the aggregated dict.
+
+    Each benchmark gets its own ``<benchmark_id>.json`` file plus the
+    aggregated ``results.json``. The aggregated payload follows the
+    ``results.schema.json`` shape (``schema_version`` + ``benchmarks`` list).
+    """
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    results: list[dict[str, Any]] = []
+    for bm in benchmarks:
+        bm.prepare(data_dir)
+        t0 = time.monotonic()
+        result = bm.run()
+        result.elapsed_seconds = time.monotonic() - t0
+        result = bm.score(result)
+        bm_path = out_dir / f"{result.benchmark_id}.json"
+        bm_path.write_text(
+            json.dumps(result.__dict__, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        results.append(result.__dict__)
+    agg: dict[str, Any] = {
+        "schema_version": "v1",
+        "global_seed": global_seed,
+        "benchmarks": results,
+    }
+    (out_dir / "results.json").write_text(
+        json.dumps(agg, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return agg
+
+
 __all__ = [
+    "Benchmark",
+    "BenchmarkResult",
     "HashTriple",
     "check_hashes",
     "format_hash_diff",
     "hash_triple_from_model_card",
     "parse_model_card_front_matter",
+    "run_suite",
 ]
