@@ -36,3 +36,20 @@ These RFCs lock the design before implementation grows. Read them in order. Each
 - An RFC moves to `Status: Locked` only when every decision in the "Decisions locked" section has a concrete value (no "TBD").
 - New decisions amend the RFC with a dated entry rather than rewriting silently.
 - A superseded RFC stays in the repo with a pointer to the replacement.
+
+## RFC structure
+
+The RFCs in this directory predate the spec corpus expansion of 2026-05-15 and use a project-local template:
+
+| Section | Equivalent in the canonical RFC template |
+|---|---|
+| `Status` | `Status` |
+| `Problem` | `Summary` + `Motivation` |
+| `Context` (when present) | extension of `Motivation` |
+| `Decisions locked` | `Proposed Design` (with decisions explicitly named D1, D2, …) |
+| `Deferred items` | `Non-Goals` + `Open Questions` |
+| `Acceptance condition` | `Testing Strategy` (the conditions that prove the RFC is implemented correctly) |
+
+The two templates are functionally equivalent. `Alternatives Considered` and explicit `Drawbacks` sections are folded into the `Decisions locked` rationale paragraphs of each RFC; where a load-bearing alternative was rejected, the rejection is named (see RFC-0008 §D15 for the LeWM-vs-CodingJEPA comparison and RFC-0012 §D3 for chunk-granularity rationale).
+
+New RFCs (`RFC-0015+`) follow the canonical template documented in the project bootstrap goal (`docs/goal.md` §Phase 1.4). Existing RFCs will be amended with `Alternatives Considered` and `Drawbacks` sections only when a concrete reviewer finds a gap; we do not retrofit form for form's sake.

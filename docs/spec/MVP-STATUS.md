@@ -5,12 +5,17 @@ Current state: **documentation/spec package only.** No code, no model, no data.
 ## Completed
 - [x] README (rebranded to CodingJEPA, Python focus)
 - [x] PRD
-- [x] system spec
+- [x] system spec (long-form): `docs/spec/SYSTEM-SPEC.md`
 - [x] research notes (incl. LeWorldModel mapping)
 - [x] implementation plan
 - [x] schedule
 - [x] RFC stack (0001–0014)
 - [x] candidate Python repositories list (`docs/data/CANDIDATE_REPOS.md`)
+- [x] top-level canonical spec (`SPEC.md`) and per-section corpus (`docs/spec/00-overview.md` through `docs/spec/10-glossary.md`):
+  - 00 overview, 01 architecture, 02 public API, 03 data model, 04 error model,
+    05 observability, 06 security, 07 testing strategy, 08 performance budget,
+    09 release & versioning, 10 glossary.
+- [x] implementation tracker scaffold at `docs/roadmap/IMPLEMENTATION.md` (filed jointly with the GitHub issue set)
 
 ## Not started
 - [ ] data audit and mirroring of the 10 source repos
