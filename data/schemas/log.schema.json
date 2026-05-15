@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/log.schema.json",
+  "title": "CodingJEPA structured log record",
+  "description": "JSONLines log schema; see docs/spec/05-observability.md §Schema.",
+  "type": "object",
+  "required": ["ts", "level", "event", "git_sha", "deterministic", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "ts": {
+      "type": "string",
+      "description": "ISO-8601 UTC with millisecond precision."
+    },
+    "level": {
+      "type": "string",
+      "enum": ["debug", "info", "warn", "error"]
+    },
+    "event": {
+      "type": "string",
+      "description": "Member of the closed event taxonomy in spec/05."
+    },
+    "request_id": {
+      "type": ["string", "null"],
+      "description": "UUIDv7; per HTTP request and per CLI invocation."
+    },
+    "run_id": {
+      "type": ["string", "null"],
+      "description": "UUIDv7; per training/eval run."
+    },
+    "git_sha": {
+      "type": "string"
+    },
+    "manifest_hash": {
+      "type": "string"
+    },
+    "checkpoint_hash": {
+      "type": "string"
+    },
+    "index_id": {
+      "type": "string"
+    },
+    "deterministic": {
+      "type": "boolean"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "error_code": {
+      "type": "string",
+      "description": "Set iff level=='error'. From the closed taxonomy in spec/04-error-model.md."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Per-event payload; keys are documented in spec/05 §Closed event taxonomy."
+    }
+  }
+}
