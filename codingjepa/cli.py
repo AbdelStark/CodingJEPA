@@ -38,6 +38,18 @@ def _build_parser() -> argparse.ArgumentParser:
 
     add_data_subparser(subparsers)
 
+    # Demo: refactor subcommand (RFC-0006 §D2).
+    from codingjepa.demo.cli import build_refactor_parser, cmd_refactor
+
+    refactor_parser = build_refactor_parser()
+    refactor_sub = subparsers.add_parser(
+        "refactor",
+        help="Refactor a Python snippet using CodingJEPA.",
+        parents=[refactor_parser],
+        add_help=False,
+    )
+    refactor_sub.set_defaults(func=cmd_refactor)
+
     return parser
 
 
