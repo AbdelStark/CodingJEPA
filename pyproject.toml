@@ -94,6 +94,7 @@ testpaths = ["tests"]
 markers = [
     "slow: long-running test, deselected by default in `make test` and the `unit` CI workflow",
     "eval-smoke: 10-example eval-fixture test exercised by the `eval-smoke` CI workflow",
+    "perf: latency/throughput benchmark exercised by the `perf` CI workflow (RFC-0009 §D10, spec/08 §Regression gates)",
 ]
 
 [dependency-groups]

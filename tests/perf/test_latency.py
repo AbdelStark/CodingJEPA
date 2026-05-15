@@ -1,7 +1,10 @@
-"""Latency benchmark for the inference pipeline (#88).
+"""Latency benchmark for the inference pipeline (#88, #22).
 
-Marked ``slow`` — deselected by default. On CPU the test always passes; it only
-enforces a timing gate when a CUDA GPU is available.
+Marked ``slow`` and ``perf`` — deselected from the default ``unit`` CI workflow
+but selected by the ``perf`` workflow via ``-m perf``. On CPU the test records
+timings under relaxed thresholds (the GPU regression gate is effectively
+skipped without CUDA); on GPU the strict RFC-0009 §D10 latency budget is
+enforced and the +20% regression gate runs (spec/08 §Regression gates).
 """
 
 from __future__ import annotations
@@ -17,11 +20,14 @@ os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
 
 
 @pytest.mark.slow
+@pytest.mark.perf
 class TestInferenceLatency:
     """Latency tests for the end-to-end retrieve pipeline.
 
     The wall-clock budget is only enforced when CUDA is available. On CPU the
-    test records timing and always passes so CI can run without a GPU.
+    test records timing under a relaxed budget so CI can run without a GPU;
+    the strict GPU gate (and the +20% regression gate against the last green
+    main commit) is skipped when CUDA is not available.
     """
 
     _CPU_BUDGET_S: float = 30.0  # relaxed CPU budget (model is unoptimized)
