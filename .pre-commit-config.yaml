@@ -1,0 +1,44 @@
+# Pre-commit hooks. Run on every staged change after `pre-commit install`.
+# CI mirrors these via `.github/workflows/lint.yml`; this is the local fast path.
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]   # 1 MB cap per docs/spec/07 §CI gates.
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.13
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
+
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 26.3.1
+    hooks:
+      - id: black
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.1.0
+    hooks:
+      - id: mypy
+        args: ["--strict"]
+        files: ^codingjepa/
+        additional_dependencies:
+          - torch>=2.4
+          - libcst
+
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: v3.4.2
+    hooks:
+      - id: prettier
+        files: \.(yml|yaml|md)$
+        exclude: ^(LeWorldModel|\.venv|CHANGELOG\.md)

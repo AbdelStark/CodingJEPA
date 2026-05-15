@@ -18,8 +18,20 @@ The lockfile (`uv.lock`) is the **source of truth** per RFC-0013 §D3.
 `uv sync --frozen` is required; never `uv lock` and `uv sync` in the
 same change without intent — they regenerate the lock.
 
-`pre-commit install` is supported once `#33` lands; until then, run
-`make lint` manually before pushing.
+Set up the pre-commit hooks (`.pre-commit-config.yaml`):
+
+```bash
+uv pip install pre-commit
+pre-commit install         # registers the git hook
+pre-commit run --all-files # run once across the repo
+```
+
+Hooks: `ruff` (with `--fix`), `ruff-format`, `black`, `mypy --strict`
+(scoped to `codingjepa/`), `prettier` on `.yml`/`.yaml`/`.md`, plus
+the standard `check-added-large-files` (1 MB cap), `end-of-file-fixer`,
+`trailing-whitespace`, `check-yaml`/`check-json`/`check-toml`, and
+`check-merge-conflict`. CI mirrors these via `.github/workflows/lint.yml`;
+running `pre-commit` locally is the fast feedback loop.
 
 ## Branching
 
