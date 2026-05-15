@@ -1,0 +1,7 @@
+{
+  "rows": [
+    { "pair_id": "pair-1", "chunk_id_before": "chk-aaaa", "chunk_id_after": "chk-bbbb", "intent": "extract-helper", "split": "train", "manifest_hash": "0000000000000000000000000000000000000000000000000000000000000000" },
+    { "pair_id": "pair-2", "chunk_id_before": "chk-cccc", "chunk_id_after": "chk-dddd", "intent": "inline-helper", "split": "val", "manifest_hash": "0000000000000000000000000000000000000000000000000000000000000000" },
+    { "pair_id": "pair-3", "chunk_id_before": "chk-eeee", "chunk_id_after": "chk-ffff", "intent": "NONE", "split": "test", "manifest_hash": "0000000000000000000000000000000000000000000000000000000000000000" }
+  ]
+}
