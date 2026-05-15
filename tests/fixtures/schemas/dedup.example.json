@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "shingle_n": 5,
+  "jaccard_threshold": 0.85,
+  "clusters": [
+    {
+      "representative_chunk_id": "abcd1234",
+      "members": ["abcd1234", "efgh5678"],
+      "kept_in_split": "train"
+    }
+  ],
+  "dropped_clusters": [
+    {
+      "reason": "would_contaminate_test",
+      "members": ["aaaa0000", "bbbb1111"]
+    }
+  ]
+}

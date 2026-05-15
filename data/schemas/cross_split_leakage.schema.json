@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/cross_split_leakage.schema.json",
+  "title": "data/audit/cross_split_leakage.json",
+  "description": "Cross-split near-dup audit. Invariant: zero entries with split crossings remain after dedup.",
+  "type": "object",
+  "required": ["schema_version", "remaining_crossings", "resolved"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "remaining_crossings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["chunk_id_a", "chunk_id_b", "split_a", "split_b"],
+        "additionalProperties": false,
+        "properties": {
+          "chunk_id_a": { "type": "string" },
+          "chunk_id_b": { "type": "string" },
+          "split_a": { "type": "string", "enum": ["train", "val", "test", "ood"] },
+          "split_b": { "type": "string", "enum": ["train", "val", "test", "ood"] }
+        }
+      }
+    },
+    "resolved": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["chunk_id_a", "chunk_id_b", "resolution"],
+        "additionalProperties": false,
+        "properties": {
+          "chunk_id_a": { "type": "string" },
+          "chunk_id_b": { "type": "string" },
+          "resolution": { "type": "string", "enum": ["dropped_a", "dropped_b", "moved_to_train"] }
+        }
+      }
+    }
+  }
+}

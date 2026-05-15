@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/pool.schema.json",
+  "title": "eval/pools/<benchmark>.lock.json",
+  "description": "Deterministic eval pool. RFC-0010 §D9.",
+  "type": "object",
+  "required": ["schema_version", "benchmark", "pool_size", "chunk_ids", "pool_hash"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "benchmark": { "type": "string" },
+    "pool_size": { "type": "integer", "minimum": 1 },
+    "chunk_ids": { "type": "array", "items": { "type": "string" } },
+    "pool_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

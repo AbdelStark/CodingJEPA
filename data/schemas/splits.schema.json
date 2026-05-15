@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/splits.schema.json",
+  "title": "data/splits/v1.lock.json",
+  "description": "Per-repo split assignment. See docs/spec/03-data-model.md.",
+  "type": "object",
+  "required": ["schema_version", "split_hash", "by_repo"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "split_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "by_repo": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "enum": ["train", "val", "test", "ood"] }
+    }
+  }
+}

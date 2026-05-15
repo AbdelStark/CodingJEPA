@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/manifest.schema.json",
+  "title": "data/manifest.lock.json",
+  "description": "Frozen-dataset manifest. See docs/spec/03-data-model.md §JSON schemas.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "manifest_hash",
+    "generated_at",
+    "chunker_version",
+    "tokenizer_hash",
+    "secrets_scanner_version",
+    "splits_path",
+    "repos"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "manifest_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "generated_at": { "type": "string" },
+    "chunker_version": { "type": "string" },
+    "tokenizer_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "secrets_scanner_version": { "type": "string" },
+    "splits_path": { "type": "string" },
+    "repos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "url",
+          "commit_sha",
+          "license_spdx",
+          "subset_paths",
+          "split",
+          "py_files_in_scope",
+          "chunks_emitted",
+          "chunks_dropped",
+          "audit_path"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string" },
+          "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+          "license_spdx": { "type": "string" },
+          "subset_paths": { "type": "array", "items": { "type": "string" } },
+          "split": { "type": "string", "enum": ["train", "val", "test", "ood"] },
+          "py_files_in_scope": { "type": "integer", "minimum": 0 },
+          "chunks_emitted": { "type": "integer", "minimum": 0 },
+          "chunks_dropped": { "type": "integer", "minimum": 0 },
+          "audit_path": { "type": "string" }
+        }
+      }
+    }
+  }
+}

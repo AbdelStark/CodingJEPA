@@ -1,0 +1,22 @@
+{
+  "schema_version": "v1",
+  "metadata": {
+    "manifest_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "checkpoint_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+    "index_id": "00000000-11111111",
+    "git_sha": "deadbee",
+    "generated_at": "2026-05-15T00:00:00.000Z"
+  },
+  "benchmarks": {
+    "CJ-RET-100": {
+      "retrieval_at_10": {
+        "mean": 0.42,
+        "std": 0.03,
+        "n_seeds": 3,
+        "ci95_low": 0.39,
+        "ci95_high": 0.45,
+        "paired_bootstrap_p": 0.01
+      }
+    }
+  }
+}

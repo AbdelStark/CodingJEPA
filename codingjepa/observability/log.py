@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import sys
 from datetime import UTC, datetime
 from typing import IO, Any
@@ -146,80 +145,23 @@ class LogWriter:
             self._last_failure = None
 
 
-# ---------- Minimal JSON-Schema validator (subset) ---------------------------
+# ---------- JSON-Schema validation -------------------------------------------
 
 
 def validate_log_record(record: dict[str, Any], schema: dict[str, Any]) -> None:
-    """Validate `record` against a JSONSchema subset (object/required/properties/type/enum).
+    """Validate a log record against the log JSONSchema. See codingjepa._jsonschema."""
 
-    Raises UsageError on the first failure. The subset is the one used by
-    `data/schemas/log.schema.json`; we deliberately do not depend on
-    jsonschema-the-library at runtime (RFC-0013 §D3 keeps the dep stack lean).
-    """
+    from codingjepa._jsonschema import validate_record
 
-    if schema.get("type") != "object":
-        raise UsageError("log schema root must declare type=object", actual=schema.get("type"))
-    required = set(schema.get("required", ()))
-    missing = required - record.keys()
-    if missing:
-        raise UsageError("missing required log fields", missing=sorted(missing))
-
-    properties = schema.get("properties", {})
-    for key, value in record.items():
-        prop = properties.get(key)
-        if prop is None:
-            if not schema.get("additionalProperties", True):
-                raise UsageError(f"unknown log field: {key!r}", field=key)
-            continue
-        _check_type(key, value, prop)
-
-
-_JSON_TYPE_MAP: dict[str, tuple[type, ...]] = {
-    "string": (str,),
-    "integer": (int,),
-    "number": (int, float),
-    "boolean": (bool,),
-    "object": (dict,),
-    "array": (list,),
-    "null": (type(None),),
-}
-
-
-def _check_type(key: str, value: Any, prop: dict[str, Any]) -> None:
-    declared = prop.get("type")
-    if declared is None:
-        return
-    types = declared if isinstance(declared, list) else [declared]
-    accepted: tuple[type, ...] = tuple(t for name in types for t in _JSON_TYPE_MAP.get(name, ()))
-    if not accepted:
-        return
-    # booleans are ints; reject the surprising overlap.
-    if value is True or value is False:
-        if not any(t is bool for t in accepted):
-            raise UsageError(f"field {key!r}: bool not allowed", expected=types)
-    elif not isinstance(value, accepted) or isinstance(value, bool):
-        raise UsageError(
-            f"field {key!r}: wrong type",
-            expected=types,
-            actual=type(value).__name__,
-        )
-
-    if "enum" in prop and value not in prop["enum"]:
-        raise UsageError(
-            f"field {key!r}: value not in enum",
-            value=value,
-            enum=prop["enum"],
-        )
+    validate_record(record, schema)
 
 
 def load_log_schema() -> dict[str, Any]:
-    """Load `data/schemas/log.schema.json`. Resolved relative to the package root."""
+    """Load `data/schemas/log.schema.json`. Cached via codingjepa._jsonschema.load_schema."""
 
-    repo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    path = os.path.join(repo_root, "data", "schemas", "log.schema.json")
-    with open(path, encoding="utf-8") as fp:
-        result: dict[str, Any] = json.load(fp)
-        return result
+    from codingjepa._jsonschema import load_schema
+
+    return load_schema("log")
 
 
 __all__ = [
