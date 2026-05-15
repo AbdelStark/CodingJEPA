@@ -10,6 +10,7 @@ per `docs/spec/09-release-and-versioning.md`.
 
 ### Added
 - `.github/workflows/perf.yml` — P50/P95 regression gate (±20%) for inference latency; skips gracefully on CPU-only runners (#22).
+- `.github/workflows/nightly.yml` — daily 02:00 UTC slow-marker test run + ML diagnostics; auto-comments on #3 on failure (#23).
 - **CI + docs** (#21, #124, #128, #129, PR #200):
   - `.github/workflows/eval-smoke.yml` — runs `pytest -m eval-smoke` on push/PR; times out at 5 min (#21).
   - `paper/main.tex` — full paper skeleton with all RFC-0011 §D4 sections (Abstract through Appendix A–E) (#124).
