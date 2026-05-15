@@ -2,7 +2,7 @@
 #
 # Dockerfile.eval — reproducible image for `make eval`.
 #
-# Pinned base: nvidia/cuda:12.4.1-cudnn9-runtime-ubuntu22.04 (RFC-0013 §D2 pins CUDA 12.4).
+# Pinned base: nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04 (RFC-0013 §D2 pins CUDA 12.4).
 # For release builds, pin by digest — see docs/spec/09-release-and-versioning.md §Eval image
 # digest pin procedure.
 #
@@ -13,7 +13,7 @@
 # CI builds this image (without a GPU) to validate the Dockerfile compiles; the published
 # release image is built and pushed to GHCR by the release runbook (RFC-0011 §D7).
 
-FROM nvidia/cuda:12.4.1-cudnn9-runtime-ubuntu22.04
+FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
 # Avoid interactive tzdata/etc. prompts during apt-get.
 ENV DEBIAN_FRONTEND=noninteractive \

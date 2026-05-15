@@ -74,7 +74,7 @@ Per RFC-0011 §D7, RFC-0013 §D8.
 The reproducible eval image is built from `Dockerfile.eval` at the repository root. It
 pins:
 
-- `nvidia/cuda:12.4.1-cudnn9-runtime-ubuntu22.04` as the base (RFC-0013 §D2).
+- `nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04` as the base (RFC-0013 §D2).
 - `uv` `0.8.17` (matches `.github/workflows/*.yml`).
 - Python 3.12 (RFC-0013 §D3) from the `deadsnakes` PPA.
 - The package's runtime dependencies via `uv sync --frozen --no-dev` against `uv.lock`.
@@ -99,9 +99,9 @@ rebuild from the release tag produces a byte-identical image:
 1. Resolve the current digest of the floating tag once, on release-prep day:
 
    ```sh
-   docker pull nvidia/cuda:12.4.1-cudnn9-runtime-ubuntu22.04
+   docker pull nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
    docker inspect --format='{{index .RepoDigests 0}}' \
-       nvidia/cuda:12.4.1-cudnn9-runtime-ubuntu22.04
+       nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
    # → nvidia/cuda@sha256:<64-hex>
    ```
 
