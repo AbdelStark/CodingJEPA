@@ -9,6 +9,9 @@ per `docs/spec/09-release-and-versioning.md`.
 ## [Unreleased]
 
 ### Added
+- **Release tooling** (#126):
+  - `tools/release/hf_model_upload.py` — `huggingface_hub`-based uploader for the four `*.safetensors` weights (encoder/projector/predictor/pred_proj), the `tokenizer/` directory, `MODEL_CARD.md` (renamed to `README.md` on Hub), and `LICENSES/`. Reads `HF_TOKEN` without ever logging it; idempotent via SHA-256 comparison against existing Hub blobs; `--dry-run` prints the full upload plan; default `--repo-id` is `CodingJEPA/coding-jepa-v1`.
+  - `tests/tools/test_hf_model_upload.py` — covers dry-run enumeration, default repo-id, token-leak prevention, missing-file handling (exit 1 in real mode, exit 0 in dry-run), deterministic content hashing, and plan-builder targets.
 - **License compliance** (#30):
   - `LICENSES/` — verbatim SPDX texts for every license used by the corpus (`Apache-2.0`, `BSD-3-Clause`, `MIT`, `PSF-2.0`).
   - `tools/notice_gen.py` — generate a deterministic `NOTICE` from `data/manifest.lock.json`, listing each upstream repo's SPDX identifier, commit SHA, and copyright.
