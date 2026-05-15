@@ -17,11 +17,12 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from codingjepa._jsonschema import load_schema, validate_record
+from codingjepa.data.pairs import COMMIT_CUTOFF
 from codingjepa.errors import UsageError
 
 __all__ = [
@@ -38,6 +39,19 @@ _ZERO_HASH = "0" * 64
 
 def _now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
+
+
+def _commit_cutoff_iso() -> str:
+    """ISO8601 string for the last UTC second included in the corpus (#175).
+
+    :data:`codingjepa.data.pairs.COMMIT_CUTOFF` is the *exclusive* upper bound
+    (e.g. ``2024-01-01T00:00:00Z``); we persist the last second that is still
+    included (``2023-12-31T23:59:59Z``) so downstream consumers can read the
+    manifest without re-deriving the off-by-one.
+    """
+
+    last_included = COMMIT_CUTOFF - timedelta(seconds=1)
+    return last_included.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _serialize_for_hash(manifest: dict[str, Any]) -> bytes:
@@ -87,6 +101,7 @@ def write_manifest(
         "tokenizer_hash": tokenizer_hash,
         "secrets_scanner_version": secrets_scanner_version,
         "splits_path": splits_path,
+        "commit_cutoff_utc": _commit_cutoff_iso(),
         "repos": [dict(r) for r in repos],
     }
     # Hash with the placeholder; then validate the *final* manifest.

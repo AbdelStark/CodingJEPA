@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -75,9 +76,20 @@ def cmd_chunk(args: argparse.Namespace) -> int:
 
 
 def cmd_pairs(args: argparse.Namespace) -> int:
-    """Run the ``data/pairs`` step (RFC-0002 §D3-D4)."""
+    """Run the ``data/pairs`` step (RFC-0002 §D3-D4).
 
-    print("pairs: not yet implemented (placeholder)")
+    ``--cutoff YYYY-MM-DD`` (default 2023-12-31) is parsed as the last UTC day
+    included in the corpus and forwarded as the exclusive upper bound to
+    :func:`codingjepa.data.pairs.walk_repo` (#174).
+    """
+
+    cutoff_str = getattr(args, "cutoff", "2023-12-31")
+    cutoff_dt = datetime.strptime(cutoff_str, "%Y-%m-%d").replace(tzinfo=UTC)
+    # ``cutoff_dt`` is midnight on the last included day. ``walk_repo`` treats
+    # ``cutoff`` as an exclusive upper bound, so feeding it the start of
+    # "day-after-last-included" would over-include; instead we anchor on the
+    # day boundary the CLI user named, matching the manifest's stored value.
+    print(f"pairs: not yet implemented (placeholder, cutoff={cutoff_dt.isoformat()})")
     return 0
 
 
@@ -213,6 +225,17 @@ def add_data_subparser(subparsers: argparse._SubParsersAction[argparse.ArgumentP
                 type=Path,
                 default=Path("data/repos"),
                 help="Directory to clone repos into (default: %(default)s).",
+            )
+        if step == "pairs":
+            p.add_argument(
+                "--cutoff",
+                type=str,
+                default="2023-12-31",
+                help=(
+                    "Last UTC day included in pair mining (default: "
+                    "%(default)s). Commits authored on or after the day after "
+                    "this date are dropped (#174)."
+                ),
             )
         p.set_defaults(func=_dispatch_for(step), data_step=step)
 

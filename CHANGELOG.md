@@ -17,6 +17,14 @@ per `docs/spec/09-release-and-versioning.md`.
   - `docs/notes/PHASE-1.md` — data pipeline notes: corpus summary, audit gates, dedup, leakage (#128).
   - `docs/notes/PHASE-4.md` — demo subsystem notes (#129).
   - `docs/notes/PHASE-5.md` — eval harness notes (#129).
+- **Dataset tools** (#174–#177, PR #200):
+  - `codingjepa.data.pairs.COMMIT_CUTOFF` — `datetime(2024, 1, 1, UTC)`; commits at/after this date are skipped (RFC-0002 §D11).
+  - `codingjepa data pairs --cutoff YYYY-MM-DD` — CLI argument, default `2023-12-31`.
+  - `codingjepa.data.manifest` — now writes `commit_cutoff_utc = "2023-12-31T23:59:59Z"` into every manifest.
+  - `data/schemas/manifest.schema.json` — `commit_cutoff_utc` is now a required field.
+  - `tools/hf_convert.py` — build a HF `DatasetDict` from pairs parquet files and push to HF Hub.
+  - `tools/assert_no_secrets.py` — scan corpus parquet files for secrets, exit 1 on any hit.
+  - `tools/assert_trufflehog_clean.py` — run `trufflehog filesystem` scan; graceful skip if not installed.
 - **Phase 8 — Evaluation harness** (#107–#123, PR #198):
   - `codingjepa.eval.harness` — `Benchmark` ABC with `prepare/run/score`, `BenchmarkResult` dataclass, `run_suite` orchestrator (writes per-benchmark JSON + `results/results.json`).
   - `codingjepa.eval.benchmarks.ret` — `CJ-RET-100` / `CJ-RET-1k`: FAISS `IndexFlatIP` retrieval, R@1/R@5/R@10/MRR.

@@ -174,3 +174,42 @@ def test_update_manifest_repo_partial_update(tmp_path: Path) -> None:
     assert updated["repos"][0]["py_files_in_scope"] == 10
     assert updated["repos"][0]["chunks_emitted"] == 20
     assert updated["repos"][0]["chunks_dropped"] == 3
+
+
+# ---------------------------------------------------------------------------
+# commit_cutoff_utc (#175) — sourced from codingjepa.data.pairs.COMMIT_CUTOFF.
+#
+# COMMIT_CUTOFF is the exclusive upper bound (2024-01-01T00:00:00Z), so the
+# value persisted in the manifest is the *last second included*:
+# "2023-12-31T23:59:59Z".
+# ---------------------------------------------------------------------------
+
+
+def test_manifest_includes_commit_cutoff_utc(tmp_path: Path) -> None:
+    """write_manifest stamps the (last-included-second) cutoff into the manifest."""
+
+    out = tmp_path / "manifest.lock.json"
+    manifest = manifest_mod.write_manifest([_make_repo()], output_path=out)
+    assert manifest["commit_cutoff_utc"] == "2023-12-31T23:59:59Z"
+
+
+def test_manifest_commit_cutoff_utc_required_field(tmp_path: Path) -> None:
+    """commit_cutoff_utc is a required schema field and survives load_manifest."""
+
+    out = tmp_path / "manifest.lock.json"
+    written = manifest_mod.write_manifest([_make_repo()], output_path=out)
+    loaded = manifest_mod.load_manifest(out)
+    assert loaded["commit_cutoff_utc"] == written["commit_cutoff_utc"]
+
+
+def test_manifest_commit_cutoff_utc_matches_pairs_constant(tmp_path: Path) -> None:
+    """The stored value is COMMIT_CUTOFF - 1s, formatted as ISO8601 with Z suffix."""
+
+    from datetime import timedelta
+
+    from codingjepa.data.pairs import COMMIT_CUTOFF
+
+    out = tmp_path / "manifest.lock.json"
+    manifest = manifest_mod.write_manifest([_make_repo()], output_path=out)
+    last_included = COMMIT_CUTOFF - timedelta(seconds=1)
+    assert manifest["commit_cutoff_utc"] == last_included.strftime("%Y-%m-%dT%H:%M:%SZ")

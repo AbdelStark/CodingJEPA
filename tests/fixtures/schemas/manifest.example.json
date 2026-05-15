@@ -6,6 +6,7 @@
   "tokenizer_hash": "1111111111111111111111111111111111111111111111111111111111111111",
   "secrets_scanner_version": "0.1.0",
   "splits_path": "data/splits/v1.lock.json",
+  "commit_cutoff_utc": "2023-12-31T23:59:59Z",
   "repos": [
     {
       "name": "psf/black",

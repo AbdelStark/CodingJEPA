@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -68,6 +69,9 @@ class _StubModifiedFile:
             self.filename = (self.new_path or self.old_path or "").split("/")[-1]
 
 
+_PRE_CUTOFF_DATE = datetime(2023, 6, 1, tzinfo=UTC)
+
+
 @dataclass
 class _StubCommit:
     """Stand-in for pydriller's Commit."""
@@ -79,6 +83,7 @@ class _StubCommit:
     merge: bool = False
     parents: list[str] | None = None
     modified_files: list[_StubModifiedFile] | None = None
+    author_date: datetime = _PRE_CUTOFF_DATE
 
     def __post_init__(self) -> None:
         if self.parents is None:
@@ -400,3 +405,139 @@ def test_walk_repo_skips_unparseable_source(
 
     # Must not raise; just yields nothing.
     assert list(pairs.walk_repo(tmp_path, "owner/repo")) == []
+
+
+# ---------------------------------------------------------------------------
+# Commit cutoff (#174) — RFC-0002 contamination control.
+#
+# Commits authored on or after ``COMMIT_CUTOFF`` (2024-01-01 UTC) are excluded
+# from pair extraction so the corpus stays anchored to a pre-2024 snapshot.
+# ---------------------------------------------------------------------------
+
+
+def test_commit_cutoff_constant_is_2024_jan_1() -> None:
+    """The exclusive upper bound is 2024-01-01 UTC (anything earlier is included)."""
+
+    assert pairs.COMMIT_CUTOFF == datetime(2024, 1, 1, tzinfo=UTC)
+
+
+def test_extract_pairs_skips_after_cutoff(
+    tmp_path: Path, stub_pydriller: type[_StubRepository]
+) -> None:
+    """A commit dated on or after the cutoff yields no pairs."""
+
+    _STUB_COMMITS.append(
+        _StubCommit(
+            hash="6" * 40,
+            msg="refactor: after the cutoff",
+            author_date=datetime(2024, 1, 2, tzinfo=UTC),
+            modified_files=[
+                _StubModifiedFile(
+                    new_path="m.py",
+                    old_path="m.py",
+                    source_code_before="def foo():\n    return 1\n",
+                    source_code="def foo():\n    return 2\n",
+                )
+            ],
+        )
+    )
+
+    assert list(pairs.walk_repo(tmp_path, "owner/repo")) == []
+
+
+def test_extract_pairs_skips_commit_at_cutoff_boundary(
+    tmp_path: Path, stub_pydriller: type[_StubRepository]
+) -> None:
+    """A commit dated *exactly* at the cutoff is excluded (cutoff is exclusive)."""
+
+    _STUB_COMMITS.append(
+        _StubCommit(
+            hash="7" * 40,
+            msg="refactor: on the boundary",
+            author_date=datetime(2024, 1, 1, tzinfo=UTC),
+            modified_files=[
+                _StubModifiedFile(
+                    new_path="m.py",
+                    old_path="m.py",
+                    source_code_before="def foo():\n    return 1\n",
+                    source_code="def foo():\n    return 2\n",
+                )
+            ],
+        )
+    )
+
+    assert list(pairs.walk_repo(tmp_path, "owner/repo")) == []
+
+
+def test_extract_pairs_keeps_pre_cutoff_commits(
+    tmp_path: Path, stub_pydriller: type[_StubRepository]
+) -> None:
+    """A commit dated before the cutoff is preserved (sanity check)."""
+
+    _STUB_COMMITS.append(
+        _StubCommit(
+            hash="8" * 40,
+            msg="refactor: well before the cutoff",
+            author_date=datetime(2023, 12, 31, 23, 59, 59, tzinfo=UTC),
+            modified_files=[
+                _StubModifiedFile(
+                    new_path="m.py",
+                    old_path="m.py",
+                    source_code_before="def foo():\n    return 1\n",
+                    source_code="def foo():\n    return 2\n",
+                )
+            ],
+        )
+    )
+
+    assert len(list(pairs.walk_repo(tmp_path, "owner/repo"))) == 1
+
+
+def test_extract_pairs_treats_naive_datetime_as_utc(
+    tmp_path: Path, stub_pydriller: type[_StubRepository]
+) -> None:
+    """A naive (tz-less) author_date is interpreted as UTC, then compared to cutoff."""
+
+    _STUB_COMMITS.append(
+        _StubCommit(
+            hash="9" * 40,
+            msg="refactor: naive datetime after cutoff",
+            # tz-less but after 2024-01-01 — must still be filtered out.
+            author_date=datetime(2024, 6, 15, 12, 0, 0),
+            modified_files=[
+                _StubModifiedFile(
+                    new_path="m.py",
+                    old_path="m.py",
+                    source_code_before="def foo():\n    return 1\n",
+                    source_code="def foo():\n    return 2\n",
+                )
+            ],
+        )
+    )
+
+    assert list(pairs.walk_repo(tmp_path, "owner/repo")) == []
+
+
+def test_walk_repo_respects_custom_cutoff_kwarg(
+    tmp_path: Path, stub_pydriller: type[_StubRepository]
+) -> None:
+    """Callers may override the module cutoff via the ``cutoff`` kwarg."""
+
+    _STUB_COMMITS.append(
+        _StubCommit(
+            hash="a" * 40,
+            msg="refactor: dated 2022 but caller cutoff is 2021",
+            author_date=datetime(2022, 5, 1, tzinfo=UTC),
+            modified_files=[
+                _StubModifiedFile(
+                    new_path="m.py",
+                    old_path="m.py",
+                    source_code_before="def foo():\n    return 1\n",
+                    source_code="def foo():\n    return 2\n",
+                )
+            ],
+        )
+    )
+
+    custom_cutoff = datetime(2021, 1, 1, tzinfo=UTC)
+    assert list(pairs.walk_repo(tmp_path, "owner/repo", cutoff=custom_cutoff)) == []

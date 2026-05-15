@@ -26,8 +26,10 @@ Filters (RFC-0002 §D4):
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterator
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -36,7 +38,18 @@ from pydriller import Repository
 
 from codingjepa.data.normalize import normalize_chunk
 
-__all__ = ["RawPair", "extract_top_level_nodes", "walk_repo"]
+__all__ = ["COMMIT_CUTOFF", "RawPair", "extract_top_level_nodes", "walk_repo"]
+
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Contamination control (#174)
+# ---------------------------------------------------------------------------
+# Exclusive upper bound on commit author dates. Commits authored on or after
+# this instant are excluded from pair extraction so the corpus stays anchored
+# to a pre-2024 snapshot. The manifest writer mirrors this constant (minus
+# 1 second) into ``commit_cutoff_utc`` for downstream auditability.
+COMMIT_CUTOFF: datetime = datetime(2024, 1, 1, tzinfo=UTC)
 
 # ---------------------------------------------------------------------------
 # Filter constants
@@ -120,6 +133,7 @@ def walk_repo(
     max_pairs: int = 200_000,
     from_commit: str | None = None,
     to_commit: str | None = None,
+    cutoff: datetime | None = None,
 ) -> Iterator[RawPair]:
     """Yield :class:`RawPair` objects from ``repo_dir``'s commit history.
 
@@ -130,10 +144,14 @@ def walk_repo(
 
     Filters are applied in this order:
 
-    1. commit-level drops (merge, bot author, message tokens);
-    2. file-level drops (non-``*.py``, missing pre/post source);
-    3. node-level drops (qualname not in both versions);
-    4. content-level drops (normalized chunks are identical).
+    1. cutoff drop (commit author date >= ``cutoff`` / :data:`COMMIT_CUTOFF`);
+    2. commit-level drops (merge, bot author, message tokens);
+    3. file-level drops (non-``*.py``, missing pre/post source);
+    4. node-level drops (qualname not in both versions);
+    5. content-level drops (normalized chunks are identical).
+
+    ``cutoff`` defaults to :data:`COMMIT_CUTOFF` (exclusive upper bound).
+    Naive (tz-less) author dates are interpreted as UTC.
     """
 
     kwargs: dict[str, Any] = {}
@@ -142,10 +160,14 @@ def walk_repo(
     if to_commit is not None:
         kwargs["to_commit"] = to_commit
 
+    effective_cutoff = cutoff if cutoff is not None else COMMIT_CUTOFF
+
     emitted = 0
     for commit in Repository(str(repo_dir), **kwargs).traverse_commits():
         if emitted >= max_pairs:
             return
+        if not _commit_within_cutoff(commit, effective_cutoff):
+            continue
         if not _commit_passes_filters(commit):
             continue
         parent_sha = _resolve_parent_sha(commit)
@@ -206,6 +228,26 @@ def _commit_passes_filters(commit: Any) -> bool:
         return False
     msg = (getattr(commit, "msg", "") or "").lower()
     return all(token not in msg for token in _DROP_MESSAGE_TOKENS)
+
+
+def _commit_within_cutoff(commit: Any, cutoff: datetime) -> bool:
+    """True iff ``commit.author_date`` is strictly before ``cutoff``.
+
+    Naive (tz-less) author dates are interpreted as UTC. Commits without an
+    ``author_date`` attribute (e.g. test stubs that don't set it) are kept,
+    so existing fixtures stay valid.
+    """
+
+    commit_date = getattr(commit, "author_date", None)
+    if commit_date is None:
+        return True
+    if commit_date.tzinfo is None:
+        commit_date = commit_date.replace(tzinfo=UTC)
+    if commit_date >= cutoff:
+        sha = getattr(commit, "hash", "") or ""
+        logger.debug("skipping commit after cutoff: %s", sha[:8])
+        return False
+    return True
 
 
 def _resolve_parent_sha(commit: Any) -> str:
