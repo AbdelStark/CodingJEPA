@@ -49,6 +49,8 @@ dev = [
     # scipy is dev-only: codingjepa.eval.stats is a numpy-only implementation;
     # scipy is used by the bootstrap comparison test (RFC-0010 §D7 acceptance).
     "scipy",
+    # hypothesis is dev-only: property-based tests for the safety filter chain (RFC-0007 §D6).
+    "hypothesis",
 ]
 
 [project.scripts]
@@ -92,4 +94,9 @@ testpaths = ["tests"]
 markers = [
     "slow: long-running test, deselected by default in `make test` and the `unit` CI workflow",
     "eval-smoke: 10-example eval-fixture test exercised by the `eval-smoke` CI workflow",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.152.7",
 ]
