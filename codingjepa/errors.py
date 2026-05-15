@@ -88,6 +88,18 @@ class SplitContractViolation(DataError):
     code: ClassVar[str] = "E_SPLIT_CONTRACT_VIOLATION"
 
 
+class AuditGateError(DataError):
+    """Per-repo audit failed a hard gate (compile / dedup / license / secrets).
+
+    Raised by :func:`codingjepa.data.audit.check_all_gates` when any repo's
+    :class:`AuditResult.passes_all_gates` is ``False``. Per RFC-0002 §D2 and
+    RFC-0014 §D10, gate failure must halt the pipeline before downstream
+    stages (chunker, dedup, dataset assembly) consume the corpus.
+    """
+
+    code: ClassVar[str] = "E_AUDIT_GATE"
+
+
 # ---------- Model -------------------------------------------------------------
 
 
@@ -163,6 +175,7 @@ CLOSED_TAXONOMY: tuple[type[CodingJEPAError], ...] = (
     ProvenanceMissing,
     DedupContractViolation,
     SplitContractViolation,
+    AuditGateError,
     ModelError,
     EmbeddingCollapse,
     LossDivergence,
@@ -193,6 +206,7 @@ def _all_subclasses(root: type) -> set[type]:
 __all__ = [
     "CLOSED_TAXONOMY",
     "ArtifactError",
+    "AuditGateError",
     "CheckpointHashMismatch",
     "CodingJEPAError",
     "ConfigError",
