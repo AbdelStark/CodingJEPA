@@ -9,6 +9,28 @@ per `docs/spec/09-release-and-versioning.md`.
 ## [Unreleased]
 
 ### Added
+- **Phase 8 — Evaluation harness** (#107–#123, PR #198):
+  - `codingjepa.eval.harness` — `Benchmark` ABC with `prepare/run/score`, `BenchmarkResult` dataclass, `run_suite` orchestrator (writes per-benchmark JSON + `results/results.json`).
+  - `codingjepa.eval.benchmarks.ret` — `CJ-RET-100` / `CJ-RET-1k`: FAISS `IndexFlatIP` retrieval, R@1/R@5/R@10/MRR.
+  - `codingjepa.eval.benchmarks.intent` — `CJ-INTENT`: conditioned vs. unconditional R@5, delta_R5.
+  - `codingjepa.eval.benchmarks.exec` — `CJ-EXEC` stub (returns `no_executable_pairs` until sandboxed data is provided).
+  - `codingjepa.eval.sandbox` — `run_in_sandbox()` with nsjail/firejail/plain subprocess backends.
+  - `codingjepa.eval.benchmarks.robustness` — `CJ-ROB-FMT` / `CJ-ROB-RENAME` / `CJ-ROB-DOC`: rank_change_pct + mean_cosine_drift.
+  - `codingjepa.eval.benchmarks.ood` — `CJ-OOD`: R@10 on 200-pair pool.
+  - `codingjepa.eval.benchmarks.probes` — `CJ-PROBE-NAME/DEFECT/CLONE` linear probes (sklearn-optional with graceful fallback).
+  - `codingjepa.eval.benchmarks.human` — `CJ-HUMAN` stub (returns `no_human_annotations` until annotation file present).
+  - `codingjepa.eval.memo` — `generate_memo()` writing RESULTS-MEMO.md with all 11 RFC-0010 §D6 sections.
+  - `codingjepa.eval.diff_gallery` — HTML diff gallery for the gold subset.
+  - `codingjepa.eval.confusions` — worst-50 error pages per intent.
+  - `codingjepa.eval.figures` — matplotlib PDF figure generator (graceful no-op when matplotlib absent).
+  - `tests/eval/test_harness.py` — 52-test suite on 10-example fixture covering every benchmark + orchestrator + memo + sandbox + gallery.
+- **Phase 7 — Demo subsystem** (#100–#106, PR #172):
+  - `codingjepa.demo.cli` — argparse `refactor` command with `--source/--file/--intent/--k/--threshold/--out`.
+  - `codingjepa.demo.web` — FastAPI app: `GET /`, `POST /refactor`, `GET /healthz`, `GET /version`.
+  - `codingjepa.demo.diff` — `render_diff_terminal()` (pygments) + `render_diff_html()` (self-contained page, monokai).
+  - `codingjepa.demo.web.templates` — HTMX form + candidate rendering (no build step, htmx@1.9.12 from unpkg).
+  - `codingjepa.demo.messages` — closed refusal copy table (5 demo-path keys).
+  - `examples/demo-cpython-extract-helper.py` — deterministic extract-helper diff example (no checkpoint required).
 - **Phase 6 — Inference pipeline** (#82–#90, PR #171):
   - `codingjepa.inference.embed` — normalize→tokenize→encode→project→L2-norm, returns `None` on parse fail or >512 tokens.
   - `codingjepa.inference.index` — FAISS `IndexFlatIP` with `.meta.json` sidecar; `index_id = f"{checkpoint_hash[:8]}-{manifest_hash[:8]}"` versioning; `load_index()` raises `IndexHashMismatch` on drift.

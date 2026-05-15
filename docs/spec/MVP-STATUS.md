@@ -84,10 +84,25 @@ Current state: **complete implementation across all 6 phases.** 871 tests pass, 
 - [x] `examples/demo-cpython-extract-helper.py` — deterministic extract-helper diff example (no checkpoint)
 - [x] Hidden-step ban enforcement in `render_diff_html` (`data-hidden-step` assertion)
 
+### Phase 8 — Evaluation harness (issues #107–#123)
+- [x] `codingjepa.eval.harness` — `Benchmark` ABC + `BenchmarkResult` + `run_suite` orchestrator (writes `results/results.json`)
+- [x] `codingjepa.eval.benchmarks.ret` — `CJ-RET-100` / `CJ-RET-1k`: FAISS IndexFlatIP, R@1/R@5/R@10/MRR
+- [x] `codingjepa.eval.benchmarks.intent` — `CJ-INTENT`: conditioned vs. unconditional R@5, delta_R5
+- [x] `codingjepa.eval.benchmarks.exec` — `CJ-EXEC` stub (no_executable_pairs until sandboxed data present)
+- [x] `codingjepa.eval.sandbox` — `run_in_sandbox()` with nsjail/firejail/plain backends
+- [x] `codingjepa.eval.benchmarks.robustness` — `CJ-ROB-FMT` / `CJ-ROB-RENAME` / `CJ-ROB-DOC`: rank_change_pct + cosine_drift
+- [x] `codingjepa.eval.benchmarks.ood` — `CJ-OOD`: R@10 on 200-pair pool
+- [x] `codingjepa.eval.benchmarks.probes` — `CJ-PROBE-NAME/DEFECT/CLONE` linear probes (sklearn-optional)
+- [x] `codingjepa.eval.benchmarks.human` — `CJ-HUMAN` stub (no_human_annotations until annotation file present)
+- [x] `codingjepa.eval.memo` — `generate_memo()`: RESULTS-MEMO.md with all 11 RFC-0010 §D6 sections
+- [x] `codingjepa.eval.diff_gallery` — HTML diff gallery for gold subset
+- [x] `codingjepa.eval.confusions` — worst-50 error pages per intent
+- [x] `codingjepa.eval.figures` — matplotlib PDF generator (graceful no-op when matplotlib absent)
+- [x] `tests/eval/test_harness.py` — 52 tests on 10-example fixture (RFC-0010 acceptance criteria)
+
 ## Not yet started
 
 - [ ] Actual training runs (#75 Stage A pretrain, #76 Stage B fine-tune) — require GPU compute
-- [ ] Full eval harness (#107–#123: retrieval benchmarks, sandbox, robustness probes, memo)
 - [ ] Paper draft + HF Hub upload (#124–#129)
 - [ ] Hydra config tree (#17), Dockerfile.eval (#24), LICENSES/ (#30)
 - [ ] Gold subset annotation tooling (#55)

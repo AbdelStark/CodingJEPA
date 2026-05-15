@@ -151,9 +151,28 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 
 ---
 
-**Current test count: 885 passing, 0 failing.**
+### Eval harness (v0.5)
+| # | Title | PR |
+|---|-------|----|
+| #107 | eval: codingjepa.eval.harness | #198 |
+| #108 | eval: CJ-RET-100 / CJ-RET-1k | #198 |
+| #109 | eval: CJ-INTENT | #198 |
+| #110 | eval: CJ-EXEC (stub) | #198 |
+| #111 | eval: codingjepa.eval.sandbox | #198 |
+| #112 | eval: CJ-ROB-FMT / RENAME / DOC | #198 |
+| #113 | eval: CJ-OOD | #198 |
+| #114 | eval: CJ-PROBE-NAME / DEFECT / CLONE | #198 |
+| #115 | eval: CJ-HUMAN (stub) | #198 |
+| #119 | eval: codingjepa.eval.memo | #198 |
+| #120 | eval: diff gallery + confusions HTML | #198 |
+| #121 | eval: figures generator (PDFs) | #198 |
+| #123 | eval: 10-example fixture for eval-smoke | #198 |
 
-**Next priority:** Eval harness (#107–#123), then actual training runs (#75, #76).
+---
+
+**Current test count: 898 passing, 0 failing.**
+
+**Next priority:** Actual training runs (#75, #76), then release (#124–#129).
 
 ---
 
@@ -170,7 +189,7 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 | #8 | [Tracking] Inference pipeline | ✅ closed | RFC-0009, RFC-0007 |
 | #9 | [Tracking] Safety rails | ✅ closed | RFC-0007 |
 | #10 | [Tracking] Demo & developer workflow | ✅ closed | RFC-0006, RFC-0009 |
-| #11 | [Tracking] Evaluation harness | open | RFC-0010, RFC-0005 |
+| #11 | [Tracking] Evaluation harness | ✅ closed | RFC-0010, RFC-0005 |
 | #12 | [Tracking] Paper, release, packaging | open | RFC-0011, RFC-0013, RFC-0014, spec/09 |
 | #173 | [Tracking] Dataset: human-python-refactors — curation, quality, HF publication | open | RFC-0002, RFC-0014, RFC-0015 |
 
@@ -292,22 +311,23 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 |---|--------|-------|------|----------|--------|------------|----------|
 | #21 | 🔲 | ci: eval-smoke workflow | infra | p1 | s | RFC-0013, RFC-0010 | #3 |
 | #23 | 🔲 | ci: nightly slow tests + ML diagnostics | infra | p2 | m | spec/07 | #3 |
-| #107 | 🔲 | eval: codingjepa.eval.harness | eval | p0 | m | RFC-0010 | #11 |
-| #108 | 🔲 | eval: CJ-RET-100 / CJ-RET-1k | eval | p0 | m | RFC-0010, RFC-0005 | #11 |
-| #109 | 🔲 | eval: CJ-INTENT | eval | p0 | s | RFC-0010, RFC-0005 | #11 |
-| #110 | 🔲 | eval: CJ-EXEC | eval | p0 | l | RFC-0010, RFC-0005 | #11 |
-| #111 | 🔲 | eval: codingjepa.eval.sandbox | eval | p0 | l | RFC-0013, spec/06 | #11 |
-| #112 | 🔲 | eval: CJ-ROB-FMT / RENAME / DOC | eval | p0 | m | RFC-0010, RFC-0005 | #11 |
-| #113 | 🔲 | eval: CJ-OOD | eval | p1 | m | RFC-0010, RFC-0014 | #11 |
-| #114 | 🔲 | eval: CJ-PROBE-NAME / DEFECT / CLONE | eval | p1 | l | RFC-0010 | #11 |
-| #115 | 🔲 | eval: CJ-HUMAN | eval | p1 | m | RFC-0010, RFC-0005 | #11 |
+| #107 | ✅ | eval: codingjepa.eval.harness | eval | p0 | m | RFC-0010 | #11 |
+| #108 | ✅ | eval: CJ-RET-100 / CJ-RET-1k | eval | p0 | m | RFC-0010, RFC-0005 | #11 |
+| #109 | ✅ | eval: CJ-INTENT | eval | p0 | s | RFC-0010, RFC-0005 | #11 |
+| #110 | ✅ | eval: CJ-EXEC (stub) | eval | p0 | l | RFC-0010, RFC-0005 | #11 |
+| #111 | ✅ | eval: codingjepa.eval.sandbox | eval | p0 | l | RFC-0013, spec/06 | #11 |
+| #112 | ✅ | eval: CJ-ROB-FMT / RENAME / DOC | eval | p0 | m | RFC-0010, RFC-0005 | #11 |
+| #113 | ✅ | eval: CJ-OOD | eval | p1 | m | RFC-0010, RFC-0014 | #11 |
+| #114 | ✅ | eval: CJ-PROBE-NAME / DEFECT / CLONE | eval | p1 | l | RFC-0010 | #11 |
+| #115 | ✅ | eval: CJ-HUMAN (stub) | eval | p1 | m | RFC-0010, RFC-0005 | #11 |
 | #116 | ✅ | eval: codingjepa.eval.pools | eval | p0 | s | RFC-0010 | #11 |
 | #117 | ✅ | eval: codingjepa.eval.stats | eval | p0 | s | RFC-0005, RFC-0010 | #11 |
 | #118 | ✅ | eval: results.json schema + validator | eval | p0 | s | RFC-0010, spec/03 | #11 |
-| #119 | 🔲 | eval: codingjepa.eval.memo | eval | p1 | m | RFC-0010 | #11 |
-| #120 | 🔲 | eval: diff gallery + confusions HTML | eval | p2 | m | RFC-0010 | #11 |
+| #119 | ✅ | eval: codingjepa.eval.memo | eval | p1 | m | RFC-0010 | #11 |
+| #120 | ✅ | eval: diff gallery + confusions HTML | eval | p2 | m | RFC-0010 | #11 |
+| #121 | ✅ | eval: figures generator (PDFs) | eval | p1 | m | RFC-0010, RFC-0011 | #11 |
 | #122 | ✅ | eval: hash-check enforcer | eval | p0 | s | RFC-0010, spec/04 | #11 |
-| #123 | 🔲 | eval: 10-example fixture for eval-smoke | eval | p1 | m | RFC-0010 | #11 |
+| #123 | ✅ | eval: 10-example fixture for eval-smoke | eval | p1 | m | RFC-0010 | #11 |
 
 ## Milestone: v1.0 — paper, release, packaging
 
@@ -315,7 +335,6 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 |---|--------|-------|------|----------|--------|------------|----------|
 | #24 | 🔲 | infra: Dockerfile.eval | infra | p1 | m | RFC-0013 | #3 |
 | #30 | 🔲 | infra: LICENSES/ + NOTICE generator | infra | p1 | s | RFC-0014 | #3, #173 |
-| #121 | 🔲 | eval: figures generator (PDFs) | eval | p1 | m | RFC-0010, RFC-0011 | #11 |
 | #124 | 🔲 | release: paper/main.tex skeleton | release | p1 | s | RFC-0011 | #12 |
 | #125 | ✅ | release: MODEL_CARD.md template | release | p0 | s | RFC-0013, spec/03 | #12 |
 | #126 | 🔲 | release: HF Hub upload (model + tokenizer) | release | p1 | m | RFC-0013 | #12 |
