@@ -1,0 +1,54 @@
+---
+session: general
+date: 2026-05-15
+status: complete
+outcome: SUCCEEDED
+---
+
+goal: Merge all 23 stacked PRs (#132–#154) to main, then update backlog to reflect current state
+now: Start data pipeline implementation — begin with #34 (mirror), #39 (PyDriller pairs), #35 (chunker), #53 (manifest) in that order
+
+test: gh pr list --state open | wc -l  # should be 0; gh run list --branch main --limit 1 --json conclusion --jq '.[0].conclusion' # should be "success"
+
+done_this_session:
+  - task: Merged 23 stacked PRs (#132–#154) to main in dependency order
+    files: [CHANGELOG.md, Makefile, pyproject.toml, uv.lock, codingjepa/, data/schemas/, .github/workflows/, tests/, CONTRIBUTING.md, SECURITY.md, MODEL_CARD.md, tools/model_card_update.py]
+  - task: Closed missed issue #117 (eval.stats, resolved by PR #155 but not auto-closed)
+    files: []
+  - task: Updated CHANGELOG.md with all missing entries from PRs #147–#155
+    files: [CHANGELOG.md]
+  - task: Updated IMPLEMENTATION.md tracker with completed/open status columns
+    files: [docs/roadmap/IMPLEMENTATION.md]
+
+blockers: []
+
+questions:
+  - Should the eval harness (#107) full implementation be prioritized before or after the data pipeline?
+  - Are there GPU resources available for the Stage A pretrain run (#75)?
+
+decisions:
+  - stacked-PRs-via-REST-API: GitHub's auto-retarget is slow; used PATCH /pulls/{n} to update base to main manually after each merge — reliable and fast
+  - merge-strategy: Used --merge (merge commit, not squash) to preserve branch history for all 23 PRs
+
+findings:
+  - github-auto-close: PR bodies with "Closes #N" do not always trigger GitHub auto-close; issue #117 required manual closure
+  - changelog-gate: PRs #149, #150, #154 failed the changelog-entry CI gate but had no required status checks on main so merged cleanly; CHANGELOG now updated
+  - stub-vs-impl: Package scaffold (#133/#16) created placeholder stubs for all modules; only issues with dedicated PRs have real implementations
+
+worked:
+  - Batch REST API base updates (gh api PATCH) + immediate merge per PR — zero merge conflicts
+  - Sequential merge order strictly by dependency chain
+
+failed:
+  - gh pr edit 133 --base main fails with Projects classic deprecation error; use gh api PATCH instead
+
+next:
+  - Implement #34: codingjepa.data.mirror — pin and clone the 10 source repos at commit hashes (RFC-0002 §D1)
+  - Implement #39: PyDriller commit walker for refactor pair extraction
+  - Implement #35: codingjepa.data.chunker (libcst FunctionDef/ClassDef/interstitial)
+  - Implement #53: codingjepa.data.manifest (content-addressed writer)
+  - After data pipeline: implement #78 (BM25), #80 (CodeBERT), #81 (cheap-baseline-first gate) before any training
+
+files:
+  created: [thoughts/shared/handoffs/general/2026-05-15_07-45_backlog-update-post-merge.yaml]
+  modified: [CHANGELOG.md, docs/roadmap/IMPLEMENTATION.md]

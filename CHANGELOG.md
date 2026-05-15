@@ -15,12 +15,31 @@ per `docs/spec/09-release-and-versioning.md`.
   `request_id` propagation (`docs/spec/05-observability.md`).
 - `codingjepa.intents.acceptance` single-source-of-truth acceptance check
   for the 8 RFC-0004 §D2 intents.
-- `codingjepa.safety.messages` closed refusal copy table (RFC-0007 §D7).
-- `codingjepa.safety.secret_patterns` redactor/scanner pattern set.
+- `codingjepa.safety.messages` closed refusal copy table R001–R007
+  (RFC-0007 §D7).
+- `codingjepa.safety.secret_patterns` full redactor/scanner pattern set
+  from spec/05 §Redaction table.
 - `data/schemas/` JSONSchemas for `manifest`, `splits`, `audit`, `dedup`,
   `cross_split_leakage`, `log`, `results`, `pool`, `gold`, `model_card`.
 - Top-level `Makefile`, `pyproject.toml`, `uv.lock`.
 - GitHub Actions workflows: `lint`, `unit`, `safety`, `changelog`.
+- `codingjepa.eval.pools` deterministic, content-addressed eval pool
+  construction; pools keyed by SHA-256 of sorted chunk IDs
+  (`eval/pools/*.lock.json`).
+- `codingjepa.eval.stats` bootstrap CI and paired-bootstrap p-value
+  implementation (RFC-0005 §D6).
+- `codingjepa.eval.schema.validate` — results.json schema validator with
+  `jsonschema` enforcement (RFC-0010 §D5, spec/03).
+- Hash-check enforcer in `codingjepa.eval.harness` — `make eval` refuses
+  with exit code 4 on manifest / checkpoint / index hash drift
+  (RFC-0010 §D1, spec/04).
+- `MODEL_CARD.md` template with SHA-256 placeholders and
+  `tools/model_card_update.py` updater script (RFC-0013 §D2).
+- `docs/notes/RELEASE-RUNBOOK.md` v1.0.0 release checklist.
+- Pre-commit hooks: `ruff`, `black`, `mypy`, `prettier` on `.yml`/`.yaml`/`.md`.
+- `CONTRIBUTING.md`, GitHub PR template, and issue templates.
+- `tests/test_invariants.py` — cross-artifact invariant suite verifying
+  chunk_id ↔ pairs ↔ pools ↔ manifest consistency.
 
 ### Changed
 - _none_
@@ -42,6 +61,8 @@ per `docs/spec/09-release-and-versioning.md`.
 - `data/schemas/manifest.schema.json` requires sha256-shaped
   `manifest_hash` + `tokenizer_hash`; `tests/test_invariants.py` verifies
   the canonicalization rule.
+- `eval/pools/*.lock.json` records the SHA-256 content address of each eval
+  pool so `make eval` can detect drift before running benchmarks.
 
 <!--
 When adding an entry, place it under the matching heading above. Pick the
