@@ -273,7 +273,7 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 
 | # | Status | Title | Area | Priority | Effort | RFC / Spec | Tracking |
 |---|--------|-------|------|----------|--------|------------|----------|
-| #22 | 🔲 | ci: perf workflow with regression gate | infra | p1 | m | RFC-0009, spec/08 | #3 |
+| #22 | ✅ | ci: perf workflow with regression gate | infra | p1 | m | RFC-0009, spec/08 | #3 |
 | #76 | 🔲 | train: Stage B intent fine-tune run | training | p0 | l | RFC-0008 | #6 |
 | #77 | 🔲 | docs: PHASE-2.md and PHASE-3.md notes | training | p1 | s | spec/IMPLEMENTATION-PLAN | #6 |
 | #82 | ✅ | inference: codingjepa.inference.embed | inference | p0 | s | RFC-0009 | #8 |
@@ -310,7 +310,7 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 | # | Status | Title | Area | Priority | Effort | RFC / Spec | Tracking |
 |---|--------|-------|------|----------|--------|------------|----------|
 | #21 | 🔲 | ci: eval-smoke workflow | infra | p1 | s | RFC-0013, RFC-0010 | #3 |
-| #23 | 🔲 | ci: nightly slow tests + ML diagnostics | infra | p2 | m | spec/07 | #3 |
+| #23 | ✅ | ci: nightly slow tests + ML diagnostics | infra | p2 | m | spec/07 | #3 |
 | #107 | ✅ | eval: codingjepa.eval.harness | eval | p0 | m | RFC-0010 | #11 |
 | #108 | ✅ | eval: CJ-RET-100 / CJ-RET-1k | eval | p0 | m | RFC-0010, RFC-0005 | #11 |
 | #109 | ✅ | eval: CJ-INTENT | eval | p0 | s | RFC-0010, RFC-0005 | #11 |
@@ -334,7 +334,7 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 | # | Status | Title | Area | Priority | Effort | RFC / Spec | Tracking |
 |---|--------|-------|------|----------|--------|------------|----------|
 | #24 | 🔲 | infra: Dockerfile.eval | infra | p1 | m | RFC-0013 | #3 |
-| #30 | 🔲 | infra: LICENSES/ + NOTICE generator | infra | p1 | s | RFC-0014 | #3, #173 |
+| #30 | ✅ | infra: LICENSES/ + NOTICE generator | infra | p1 | s | RFC-0014 | #3, #173 |
 | #124 | 🔲 | release: paper/main.tex skeleton | release | p1 | s | RFC-0011 | #12 |
 | #125 | ✅ | release: MODEL_CARD.md template | release | p0 | s | RFC-0013, spec/03 | #12 |
 | #126 | 🔲 | release: HF Hub upload (model + tokenizer) | release | p1 | m | RFC-0013 | #12 |
