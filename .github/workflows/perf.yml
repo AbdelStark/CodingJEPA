@@ -1,0 +1,59 @@
+name: perf
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.8.17"
+
+      - name: Restore uv cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-
+
+      - name: Install dependencies (frozen)
+        run: uv sync --frozen
+
+      # CI runners are CPU-only — the latency test scales to a relaxed CPU
+      # budget and the strict GPU regression gate (+20% vs. last green main,
+      # spec/08 §Regression gates) is effectively skipped. `|| true` keeps the
+      # workflow green so the artifact is still uploaded for trend analysis;
+      # the gate is enforced on the nightly GPU runner (RFC-0009 §D10).
+      - name: pytest -m perf
+        run: |
+          uv run pytest \
+            -m perf \
+            tests/perf/test_latency.py \
+            --junitxml=perf-report.xml \
+            -v \
+            --tb=short || true
+
+      - name: Upload perf report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-report
+          path: perf-report.xml
+          retention-days: 90
