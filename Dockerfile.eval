@@ -43,8 +43,9 @@ ENV PATH="/root/.local/bin:/root/.cargo/bin:${PATH}"
 WORKDIR /workspace
 
 # Copy dependency manifests first so the dependency-resolution layer is cached and only
-# invalidated when pyproject.toml or uv.lock changes.
-COPY pyproject.toml uv.lock ./
+# invalidated when pyproject.toml or uv.lock changes. README.md is required by hatchling
+# at build time (referenced in pyproject.toml [project] readme).
+COPY pyproject.toml uv.lock README.md ./
 
 # Install runtime dependencies only (no dev extras) into the project venv. --frozen
 # ensures the resolved versions match uv.lock exactly.
