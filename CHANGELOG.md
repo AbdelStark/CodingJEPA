@@ -9,6 +9,11 @@ per `docs/spec/09-release-and-versioning.md`.
 ## [Unreleased]
 
 ### Added
+- **Reproducible eval image** (#24):
+  - `Dockerfile.eval` — pinned base `nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04`, Python 3.12, `uv` 0.8.17, runtime deps via `uv sync --frozen --no-dev`. Entrypoint runs `make eval`.
+  - `.github/workflows/docker.yml` — build-only CI on push/PR when `Dockerfile.eval`, `pyproject.toml`, or `uv.lock` changes; no GHCR push.
+  - `make eval-docker` — local convenience target (`docker build -f Dockerfile.eval -t codingjepa-eval:test .`).
+  - `docs/spec/09-release-and-versioning.md` — new "Eval image and digest pin procedure" section describing build, GHCR digest pin, and `MODEL_CARD.md` record-keeping at release time.
 - `.github/workflows/perf.yml` — P50/P95 regression gate (±20%) for inference latency; skips gracefully on CPU-only runners (#22).
 - `.github/workflows/nightly.yml` — daily 02:00 UTC slow-marker test run + ML diagnostics; auto-comments on #3 on failure (#23).
 - **CI + docs** (#21, #124, #128, #129, PR #200):

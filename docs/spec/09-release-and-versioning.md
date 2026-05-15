@@ -69,6 +69,63 @@ Per RFC-0011 §D7, RFC-0013 §D8.
 7. **Release notes.** GitHub Release page links to the changelog section, the HF Hub release, the GHCR digest, and the relevant tracking issues.
 8. **Audit trail.** `MODEL_CARD.md` carries `checkpoint_hash`, `manifest_hash`, `tokenizer_hash`, `index_id`, `git_sha`, `training_compute_h100_hours`, `seeds_reported`. The reproducibility statement in the paper points at the release tag.
 
+## Eval image (`Dockerfile.eval`) and digest pin procedure
+
+The reproducible eval image is built from `Dockerfile.eval` at the repository root. It
+pins:
+
+- `nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04` as the base (RFC-0013 §D2).
+- `uv` `0.8.17` (matches `.github/workflows/*.yml`).
+- Python 3.12 (RFC-0013 §D3) from the `deadsnakes` PPA.
+- The package's runtime dependencies via `uv sync --frozen --no-dev` against `uv.lock`.
+
+### Local build
+
+```sh
+make eval-docker
+# or
+docker build -f Dockerfile.eval -t codingjepa-eval:test .
+```
+
+`.github/workflows/docker.yml` runs the same `docker build` on every push and PR that
+touches `Dockerfile.eval`, `pyproject.toml`, or `uv.lock`. The workflow does **not**
+push — pushing is a release-time action only.
+
+### Digest pin procedure (release time)
+
+For releases, the base image must be re-pinned by **digest**, not tag, so that a
+rebuild from the release tag produces a byte-identical image:
+
+1. Resolve the current digest of the floating tag once, on release-prep day:
+
+   ```sh
+   docker pull nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+   docker inspect --format='{{index .RepoDigests 0}}' \
+       nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+   # → nvidia/cuda@sha256:<64-hex>
+   ```
+
+2. Edit `Dockerfile.eval` and replace the `FROM` line with the digest form:
+
+   ```dockerfile
+   FROM nvidia/cuda@sha256:<64-hex>
+   ```
+
+   Keep a comment above the line recording the human-readable tag the digest
+   resolved from so reviewers can sanity-check the bump.
+
+3. Rebuild locally and record the resulting eval-image digest in `MODEL_CARD.md`
+   alongside `checkpoint_hash`, `manifest_hash`, and `index_id`. The release
+   procedure (above) gates on that digest being committed before the tag is cut.
+
+4. Push to GHCR with that digest as the immutable label
+   (`ghcr.io/<org>/coding-jepa-eval@sha256:<digest>`); the floating
+   `:v1.0.0` tag is convenience-only.
+
+Between releases, the floating tag is acceptable on `main` so that security
+updates to the base layer flow through without a manual bump. Re-pin to a digest
+only at release time.
+
 ## Support windows
 
 | Track | Support |
