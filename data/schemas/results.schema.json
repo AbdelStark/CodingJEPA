@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/results.schema.json",
+  "title": "results/results.json",
+  "description": "Eval-harness results. Every reported number carries mean/std/n_seeds/ci95_low/ci95_high. RFC-0010.",
+  "type": "object",
+  "required": ["schema_version", "metadata", "benchmarks"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "manifest_hash",
+        "checkpoint_hash",
+        "index_id",
+        "git_sha",
+        "generated_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "manifest_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "checkpoint_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "index_id": { "type": "string" },
+        "git_sha": { "type": "string" },
+        "generated_at": { "type": "string" }
+      }
+    },
+    "benchmarks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "required": ["mean", "std", "n_seeds", "ci95_low", "ci95_high"],
+          "additionalProperties": true,
+          "properties": {
+            "mean": { "type": "number" },
+            "std": { "type": "number", "minimum": 0 },
+            "n_seeds": { "type": "integer", "minimum": 1 },
+            "ci95_low": { "type": "number" },
+            "ci95_high": { "type": "number" },
+            "paired_bootstrap_p": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      }
+    }
+  }
+}

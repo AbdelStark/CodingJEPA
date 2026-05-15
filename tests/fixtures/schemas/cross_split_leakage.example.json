@@ -1,0 +1,11 @@
+{
+  "schema_version": "v1",
+  "remaining_crossings": [],
+  "resolved": [
+    {
+      "chunk_id_a": "abcd1234",
+      "chunk_id_b": "efgh5678",
+      "resolution": "dropped_b"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/audit.schema.json",
+  "title": "data/audit/<repo>.json",
+  "description": "Per-repo audit record. Gates: compile_ok_rate>=0.95, duplication_rate<0.30, secret_scanner_hits==0. RFC-0002 §D2.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repo",
+    "commit_sha",
+    "license_spdx",
+    "py_files_in_scope",
+    "chunk_count",
+    "median_chunk_token_len",
+    "drop_rate_over_cap",
+    "drop_rate_parse_fail",
+    "duplication_rate",
+    "secret_scanner_hits",
+    "compile_ok_rate",
+    "per_intent_pair_count"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "repo": { "type": "string" },
+    "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "license_spdx": { "type": "string" },
+    "py_files_in_scope": { "type": "integer", "minimum": 0 },
+    "chunk_count": { "type": "integer", "minimum": 0 },
+    "median_chunk_token_len": { "type": "integer", "minimum": 0 },
+    "drop_rate_over_cap": { "type": "number", "minimum": 0, "maximum": 1 },
+    "drop_rate_parse_fail": { "type": "number", "minimum": 0, "maximum": 1 },
+    "duplication_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "secret_scanner_hits": { "type": "integer", "minimum": 0 },
+    "compile_ok_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "per_intent_pair_count": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "v1",
+  "manifest_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "generated_at": "2026-05-15T00:00:00.000Z",
+  "chunker_version": "0.1.0",
+  "tokenizer_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+  "secrets_scanner_version": "0.1.0",
+  "splits_path": "data/splits/v1.lock.json",
+  "repos": [
+    {
+      "name": "psf/black",
+      "url": "https://github.com/psf/black.git",
+      "commit_sha": "1234567890123456789012345678901234567890",
+      "license_spdx": "MIT",
+      "subset_paths": ["src/black"],
+      "split": "test",
+      "py_files_in_scope": 42,
+      "chunks_emitted": 100,
+      "chunks_dropped": 3,
+      "audit_path": "data/audit/psf-black.json"
+    }
+  ]
+}

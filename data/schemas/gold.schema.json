@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/gold.schema.json",
+  "title": "data/gold/v1.jsonl row",
+  "description": "Hand-annotated refactor pair. RFC-0002 §D7. Invariant: Cohen's kappa >= 0.7.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "pair_id",
+    "intent",
+    "before",
+    "after",
+    "annotators",
+    "ratings_per_annotator",
+    "kappa_final"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "pair_id": { "type": "string" },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "extract-helper",
+        "inline-helper",
+        "comprehension-rewrite",
+        "dataclass-migration",
+        "exception-handling-cleanup",
+        "loop-to-vectorized",
+        "argument-defaulting",
+        "none-typing-modernization",
+        "NONE"
+      ]
+    },
+    "before": { "type": "string" },
+    "after": { "type": "string" },
+    "annotators": { "type": "array", "items": { "type": "string" } },
+    "ratings_per_annotator": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["semantic", "stylistic", "intent"],
+        "additionalProperties": false,
+        "properties": {
+          "semantic": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "stylistic": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "intent": { "type": "integer", "minimum": 1, "maximum": 5 }
+        }
+      }
+    },
+    "kappa_final": { "type": "number", "minimum": 0, "maximum": 1 }
+  }
+}

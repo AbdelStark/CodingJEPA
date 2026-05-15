@@ -1,0 +1,14 @@
+{
+  "ts": "2026-05-15T00:00:00.000+00:00",
+  "level": "info",
+  "event": "inference.success",
+  "request_id": "0188aaaa-bbbb-7ccc-9ddd-eeeeeeeeeeee",
+  "run_id": null,
+  "git_sha": "deadbee",
+  "deterministic": true,
+  "payload": {
+    "top_1_chunk_id": "c-1",
+    "top_1_cosine": 0.82,
+    "top_1_confidence": 0.71
+  }
+}

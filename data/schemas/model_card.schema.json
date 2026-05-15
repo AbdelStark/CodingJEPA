@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/model_card.schema.json",
+  "title": "MODEL_CARD.md YAML front-matter",
+  "description": "Frozen identifiers embedded in MODEL_CARD.md per Hugging Face convention.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "license",
+    "checkpoint_hash",
+    "manifest_hash",
+    "tokenizer_hash",
+    "index_id",
+    "training_compute_h100_hours",
+    "seeds_reported"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "license": { "type": "string" },
+    "checkpoint_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "manifest_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "tokenizer_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "index_id": { "type": "string" },
+    "training_compute_h100_hours": { "type": "integer", "minimum": 0 },
+    "seeds_reported": { "type": "integer", "minimum": 1 }
+  }
+}

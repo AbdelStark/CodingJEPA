@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codingjepa.dev/schemas/dedup.schema.json",
+  "title": "data/audit/dedup.json",
+  "description": "MinHash-LSH near-dup clusters. See docs/spec/03-data-model.md.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "shingle_n",
+    "jaccard_threshold",
+    "clusters",
+    "dropped_clusters"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^v\\d+(\\.\\d+)?$" },
+    "shingle_n": { "type": "integer", "minimum": 1 },
+    "jaccard_threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+    "clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["representative_chunk_id", "members", "kept_in_split"],
+        "additionalProperties": false,
+        "properties": {
+          "representative_chunk_id": { "type": "string" },
+          "members": { "type": "array", "items": { "type": "string" } },
+          "kept_in_split": { "type": "string", "enum": ["train", "val", "test", "ood"] }
+        }
+      }
+    },
+    "dropped_clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reason", "members"],
+        "additionalProperties": false,
+        "properties": {
+          "reason": { "type": "string" },
+          "members": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
