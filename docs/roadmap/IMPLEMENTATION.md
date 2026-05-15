@@ -132,6 +132,17 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 | #96 | safety: filter chain | #170 |
 | #98 | safety: property test for the filter chain | #170 |
 
+### Demo (v0.4)
+| # | Title | PR |
+|---|-------|----|
+| #100 | demo: codingjepa.demo.cli | #172 |
+| #101 | demo: codingjepa.demo.web FastAPI app | #172 |
+| #102 | demo: codingjepa.demo.diff renderer | #172 |
+| #103 | demo: HTMX templates + form | #172 |
+| #104 | demo: codingjepa.demo.messages | #172 |
+| #105 | demo: deterministic example | #172 |
+| #106 | demo: hidden-step ban enforcement | #172 |
+
 ### Release scaffolding
 | # | Title | PR |
 |---|-------|----|
@@ -140,9 +151,9 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 
 ---
 
-**Current test count: 871 passing, 0 failing.**
+**Current test count: 885 passing, 0 failing.**
 
-**Next priority:** Demo (#100–#106), Eval harness (#107–#123), then actual training runs (#75, #76).
+**Next priority:** Eval harness (#107–#123), then actual training runs (#75, #76).
 
 ---
 
@@ -158,7 +169,7 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 | #7 | [Tracking] Baselines | ✅ closed | RFC-0005 |
 | #8 | [Tracking] Inference pipeline | ✅ closed | RFC-0009, RFC-0007 |
 | #9 | [Tracking] Safety rails | ✅ closed | RFC-0007 |
-| #10 | [Tracking] Demo & developer workflow | open | RFC-0006, RFC-0009 |
+| #10 | [Tracking] Demo & developer workflow | ✅ closed | RFC-0006, RFC-0009 |
 | #11 | [Tracking] Evaluation harness | open | RFC-0010, RFC-0005 |
 | #12 | [Tracking] Paper, release, packaging | open | RFC-0011, RFC-0013, RFC-0014, spec/09 |
 
@@ -266,13 +277,13 @@ safety, and inference pipeline issues have landed. GitHub issues are closed.
 
 | # | Status | Title | Area | Priority | Effort | RFC / Spec | Tracking |
 |---|--------|-------|------|----------|--------|------------|----------|
-| #100 | 🔲 | demo: codingjepa.demo.cli | demo | p1 | m | RFC-0006, spec/02 | #10 |
-| #101 | 🔲 | demo: codingjepa.demo.web FastAPI app | demo | p1 | l | RFC-0006, RFC-0009, spec/02, spec/04 | #10 |
-| #102 | 🔲 | demo: codingjepa.demo.diff renderer | demo | p1 | m | RFC-0006 | #10 |
-| #103 | 🔲 | demo: HTMX templates + form | demo | p2 | s | RFC-0006 | #10 |
-| #104 | 🔲 | demo: codingjepa.demo.messages | demo | p1 | s | RFC-0006, spec/04 | #10 |
-| #105 | 🔲 | demo: deterministic example | demo | p1 | s | RFC-0006 | #10 |
-| #106 | 🔲 | demo: hidden-step ban enforcement | demo | p1 | s | RFC-0006 | #10 |
+| #100 | ✅ | demo: codingjepa.demo.cli | demo | p1 | m | RFC-0006, spec/02 | #10 |
+| #101 | ✅ | demo: codingjepa.demo.web FastAPI app | demo | p1 | l | RFC-0006, RFC-0009, spec/02, spec/04 | #10 |
+| #102 | ✅ | demo: codingjepa.demo.diff renderer | demo | p1 | m | RFC-0006 | #10 |
+| #103 | ✅ | demo: HTMX templates + form | demo | p2 | s | RFC-0006 | #10 |
+| #104 | ✅ | demo: codingjepa.demo.messages | demo | p1 | s | RFC-0006, spec/04 | #10 |
+| #105 | ✅ | demo: deterministic example | demo | p1 | s | RFC-0006 | #10 |
+| #106 | ✅ | demo: hidden-step ban enforcement | demo | p1 | s | RFC-0006 | #10 |
 
 ## Milestone: v0.5 — eval + memo
 

@@ -75,10 +75,18 @@ Current state: **complete implementation across all 6 phases.** 871 tests pass, 
 - [x] Round-trip determinism test (`torch.use_deterministic_algorithms`)
 - [x] Latency test stub (P50/P95 skeleton, `@pytest.mark.slow`)
 
+### Phase 7 — Demo subsystem (issues #100–#106)
+- [x] `codingjepa.demo.cli` — argparse refactor command, `--source/--file/--intent/--k/--threshold/--out`
+- [x] `codingjepa.demo.web` — FastAPI app, GET /, POST /refactor, GET /healthz, GET /version
+- [x] `codingjepa.demo.diff` — `render_diff_terminal()` (pygments) + `render_diff_html()` (self-contained HTML page)
+- [x] `codingjepa.demo.web.templates` — HTMX form + candidate rendering (no build step)
+- [x] `codingjepa.demo.messages` — closed refusal copy table (demo path, 5 keys)
+- [x] `examples/demo-cpython-extract-helper.py` — deterministic extract-helper diff example (no checkpoint)
+- [x] Hidden-step ban enforcement in `render_diff_html` (`data-hidden-step` assertion)
+
 ## Not yet started
 
 - [ ] Actual training runs (#75 Stage A pretrain, #76 Stage B fine-tune) — require GPU compute
-- [ ] Demo CLI + web UI (#100–#106)
 - [ ] Full eval harness (#107–#123: retrieval benchmarks, sandbox, robustness probes, memo)
 - [ ] Paper draft + HF Hub upload (#124–#129)
 - [ ] Hydra config tree (#17), Dockerfile.eval (#24), LICENSES/ (#30)
