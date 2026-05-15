@@ -54,21 +54,25 @@ def _run_pipeline(
 class TestRoundTripDeterministic:
     def test_two_runs_produce_same_chunk_ids(self) -> None:
         """Running the pipeline twice with the same inputs should yield identical results."""
+        prev = torch.are_deterministic_algorithms_enabled()
         torch.use_deterministic_algorithms(True, warn_only=True)
-        model = build_model()
-        model.eval()
+        try:
+            model = build_model()
+            model.eval()
 
-        index, meta, _ = _build_small_index()
+            index, meta, _ = _build_small_index()
 
-        rng = np.random.default_rng(0)
-        src_emb_np = rng.random(512).astype(np.float32)
-        src_emb_np /= np.linalg.norm(src_emb_np)
-        src_emb = torch.tensor(src_emb_np)
+            rng = np.random.default_rng(0)
+            src_emb_np = rng.random(512).astype(np.float32)
+            src_emb_np /= np.linalg.norm(src_emb_np)
+            src_emb = torch.tensor(src_emb_np)
 
-        run1 = _run_pipeline(model, src_emb, index, meta)
-        run2 = _run_pipeline(model, src_emb, index, meta)
+            run1 = _run_pipeline(model, src_emb, index, meta)
+            run2 = _run_pipeline(model, src_emb, index, meta)
 
-        assert run1 == run2, f"Non-deterministic results: {run1!r} vs {run2!r}"
+            assert run1 == run2, f"Non-deterministic results: {run1!r} vs {run2!r}"
+        finally:
+            torch.use_deterministic_algorithms(prev)
 
     def test_two_runs_produce_same_cosines(self) -> None:
         """Cosine scores should be bit-equal across two runs."""
