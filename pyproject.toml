@@ -43,6 +43,9 @@ dev = [
     "ruff",
     "black",
     "mypy",
+    # scipy is dev-only: codingjepa.eval.stats is a numpy-only implementation;
+    # scipy is used by the bootstrap comparison test (RFC-0010 §D7 acceptance).
+    "scipy",
 ]
 
 [project.scripts]
