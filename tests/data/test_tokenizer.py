@@ -16,8 +16,7 @@ from codingjepa.data.tokenizer import (
 
 # A small but representative Python-flavoured corpus, padded with enough
 # unique tokens for sentencepiece to converge on a tiny vocab.
-SAMPLE_CORPUS = (
-    textwrap.dedent("""
+SAMPLE_CORPUS = textwrap.dedent("""
     def fibonacci(n):
         if n <= 1:
             return n
@@ -79,9 +78,7 @@ SAMPLE_CORPUS = (
     x = 1
     y = 2
     z = x + y
-    """).lstrip()
-    * 5
-)  # repeat to give BPE enough material
+    """).lstrip() * 5  # repeat to give BPE enough material
 
 
 def _train_small(tmp_path: Path, *, vocab_size: int = 500, text: str | None = None) -> Tokenizer:

@@ -172,6 +172,8 @@ def walk_repo(
                 after_src = _node_source(after_nodes[qualname])
                 normalized_before = normalize_chunk(before_src)
                 normalized_after = normalize_chunk(after_src)
+                if normalized_before is None or normalized_after is None:
+                    continue
                 if normalized_before == normalized_after:
                     continue
                 yield RawPair(
@@ -235,9 +237,8 @@ def _safe_parse_top_level(source: str) -> dict[str, libcst.CSTNode] | None:
 
 def _node_source(node: libcst.CSTNode) -> str:
     """Round-trip a libcst node back to source by wrapping it in a fresh module."""
-
-    module = libcst.Module(body=[node])
-    return module.code
+    tmp = libcst.parse_module("")
+    return tmp.code_for_node(node)
 
 
 def _unwrap_simple(stmt: libcst.CSTNode) -> libcst.CSTNode:
